@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <title>ACM</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <meta name="description" content="This is an online Job board">
+        <body>
+            <section>
+                <div class="navbar">
+                    <a class="active float_left" href="Index.html"> Find jobs</a> 
+                    <a class="float_right" href="Employers.html"> Employers </a> 
+                    <button class="sign_in_button" onclick="document.getElementById('id01').style.display='block'">Login</button>
+                    <br>
+                    <h1 class="Title"> Title here </h1>
+                </div>
+            </section>
+            <section>                
+                
+                <div id="id01" class="model">
+                  
+                  <form class="model-content animate" action="/action_page.php" method="post">
+                    <div class="imgcontainer">
+                    <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Model">&times;</span>
+                    <img src="img_avatar2.png" alt="Avatar" class="avatar">
+                </div>
+                
+                <div class="Sign_in_container">
+                    <label for="uname"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="uname" required>
+                
+                    <label for="psw"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="psw" required>
+                        
+                    <button type="submit">Login</button>
+                    <label>
+                        <input type="checkbox" checked="checked" name="remember"> Remember me
+                    </label>
+                </div>
+                
+                    <div class="Sign_in_container" style="background-color:#f1f1f1">
+                      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                      <span class="psw">Forgot <a href="#">password?</a></span>
+                    </div>
+                  </form>
+                </div>
+                
+                <script>
+                // Get the model
+                var model = document.getElementById('id01');
+                
+                // When the user clicks anywhere outside of the model, close it
+                window.onclick = function(event) {
+                    if (event.target == model) {
+                        model.style.display = "none";
+                    }
+                }
+                </script>
+                
+            </section>
+        </body>
+    </head>
+    <body>
+        <section>
+            <div class="Search search_container">
+                <form action="/action_page.php">
+                    <label for="kword">Search by keyword</label>
+                    <input  type="text" id="kword" name="keyword" placeholder="Search for job">
+                </form>
+            </div>
+        </section>
+    </body>
+</html>
