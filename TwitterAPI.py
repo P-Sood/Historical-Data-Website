@@ -3,6 +3,11 @@ import re
 import csv
 import sys
 from datetime import date
+import json
+
+# Tweepy and Twurl tweet JSON format is different
+# Tweepy and Twurl have the same attributes you just get them differently
+# Tweepy uses dot method and Twurl uses indexing 
 
 class TwitterAPI():
     
@@ -54,7 +59,7 @@ class TwitterAPI():
 
 
         # if you add terms to the searchParams list, it will use the logical and gate
-    def get_tweets(self,csvFileName, searchParameters , since = "2020-01-01" , until = str(date.today()), count = 5):
+    def get_tweets_tweepy(self,csvFileName, searchParameters , since = "2020-01-01" , until = str(date.today()), count = 5):
 
         self.Auth()
 
@@ -95,21 +100,21 @@ class TwitterAPI():
             # The retweeted tweet has the actual likes of the tweet, tweets that are retweets usually have 0 likes and hold no info
             # links are just links that the user puts inside of their text, used regex to find it
             try:
-                parsed_tweet['likes'] = " " + str(tweet.retweeted_status.favorite_count) + " "
-                parsed_tweet['tweet_link'] = " https://twitter.com/id/status/" + tweet.id_str + " "
+                parsed_tweet['likes'] = str(tweet.retweeted_status.favorite_count) 
+                parsed_tweet['tweet_link'] = "https://twitter.com/id/status/" + tweet.id_str 
                 for links in re.findall('http\S+\s*', tweet.retweeted_status.full_text):
                     url_link += links
                 parsed_tweet['added_url'] = url_link
 
             except:
-                parsed_tweet['likes'] = " " + str(tweet.favorite_count) + " "
-                parsed_tweet['tweet_link'] = " https://twitter.com/id/status/" + tweet.id_str + " "
+                parsed_tweet['likes'] =  str(tweet.favorite_count) 
+                parsed_tweet['tweet_link'] = "https://twitter.com/id/status/" + tweet.id_str 
                 for links in re.findall('http\S+\s*', tweet.full_text):
                     url_link += links
                 parsed_tweet['added_url'] = url_link 
 
-            # Next block of code checks to see if tweet has a video, print link. If not check if tweet has images, print img links, 
-            # if not then no media print empty
+            # Next block of code checks to see if tweet has a video, print link. If not check if tweet has multiple images, print img links, 
+            # if not then check if just 1 media image, print img, if nothing then print empty
             try:
                 parsed_tweet['hyperlinks'] = tweet.extended_entities["media"][0]["video_info"]["variants"][0]["url"]
             except:
@@ -118,13 +123,77 @@ class TwitterAPI():
                         imgTag += image["media_url_https"]+ " "
                     parsed_tweet['hyperlinks'] = imgTag 
                 except:
-                    parsed_tweet['hyperlinks'] = " empty "
+                    try:
+                        parsed_tweet['hyperlinks'] = tweet.entities["media_url_https"]
+                    except:
+                        parsed_tweet['hyperlinks'] = "empty"
 
             
                 
             writer.writerow(parsed_tweet)
         return tweets 
 
+    # After doing a tweet search in Twurl, you can save it to a text file, and then run this function
+    # To put it in a similar format as up above in csv
+    def get_tweets_twurl(self,textFileName,csvFileName):
+        textFile = open(textFileName, 'r',encoding="utf-8")
+        data = json.load(textFile)
+
+        csvFile = open(csvFileName, 'w',encoding="utf-8")
+        fieldnames = ['user_id','date','twitter_id','text','hyperlinks','likes','retweets','related_hashtags','added_url','tweet_link']
+        writer = csv.DictWriter(csvFile,fieldnames=fieldnames) 
+        writer.writeheader()
+        
+        for tweet in data:
+            parsed_tweet = {}
+            user = tweet['user']
+            tags = ""
+            tag = "empty"
+            imgTag = ""
+            url_link = ""
+
+            parsed_tweet['user_id'] = user['screen_name']
+            parsed_tweet['date'] = str(tweet['created_at']) 
+            parsed_tweet['twitter_id'] = tweet['id_str']
+            parsed_tweet['text'] = self.remove_emoji(self.clean_tweet(tweet['text'])) 
+
+            try:
+                parsed_tweet['hyperlinks'] = tweet.extended_entities["media"][0]["video_info"]["variants"][0]["url"]
+            except:
+                try:
+                    for image in tweet.extended_entities["media"]:
+                        imgTag += image["media_url_https"]+ " "
+                    parsed_tweet['hyperlinks'] = imgTag 
+                except:
+                    try:
+                        parsed_tweet['hyperlinks'] = tweet.entities["media_url_https"]
+                    except:
+                        parsed_tweet['hyperlinks'] = "empty"
+
+            parsed_tweet['retweets'] = str(tweet['retweet_count']) 
+
+            for hashtag in tweet['entities']['hashtags']:
+                tags += hashtag['text'] + "-"
+                tag = re.sub("[^A-Za-z]", " ", tags)
+            parsed_tweet['related_hashtags'] = tag
+
+            try:
+                parsed_tweet['likes'] =  str(tweet['retweeted_status']['favorite_count']) 
+                parsed_tweet['tweet_link'] = "https://twitter.com/id/status/" + tweet['retweeted_status']['id_str'] 
+                for links in re.findall('http\S+\s*', tweet['retweeted_status']['text']):
+                    url_link += links
+                parsed_tweet['added_url'] = url_link
+
+            except:
+                parsed_tweet['likes'] =  str(tweet['favorite_count']) 
+                parsed_tweet['tweet_link'] = "https://twitter.com/id/status/" + tweet['id_str']
+                for links in re.findall('http\S+\s*', tweet['text']):
+                    url_link += links
+                parsed_tweet['added_url'] = url_link 
+
+            writer.writerow(parsed_tweet)
+        textFile.close()
+  
 
 def main():
     consumer_key = ''
@@ -133,7 +202,9 @@ def main():
     access_token_secret = ''
 
     api = TwitterAPI(consumer_key,consumer_secret,access_token,access_token_secret)
-    api.get_tweets(csvFileName = "myCSV.csv" , searchParameters = ["#blackouttuesday"])
+    #api.Auth()
+    #api.get_tweets_tweepy(csvFileName = "myCSV.csv" , searchParameters = ["#blackouttuesday"])
+    api.get_tweets_twurl(textFileName = "text.txt", csvFileName = "myCSV1.csv")
 
 if __name__ == "__main__":
     main()
