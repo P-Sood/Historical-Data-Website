@@ -160,7 +160,11 @@ class TwitterAPITwurl(cleanTweets):
 
         self.next_count = 0
 
-
+    def firstTwurlCMD(self,textFileName,csvFileName):
+        os.chdir(os.path.join(self.path,self.input_directory))
+        cmd = 'twurl \"/1.1/tweets/search/30day/Test.json\" -A \"Content-Type: application/json\" -d \'{\"query\":\"#TwitchBlackout lang:en\",\"maxResults\":\"100\",\"fromDate\":\"202006230000\",\"toDate\":\"202007142359\"}\' > '  + textFileName + ".txt"
+        os.system(cmd)
+        self.tweets_JSONtoCSV(textFileName,csvFileName)
 
     # After doing a tweet search in Twurl, you can save it to a text file, and then run this function
     # To put it in a similar format as up above in csv
@@ -271,13 +275,12 @@ class TwitterAPITwurl(cleanTweets):
             csvFileName = csvFileName[0:len(csvFileName)-2] + "_" + str(self.next_count)
             self.getNextTweets_fromTwurl(nextPageRequest,textFileName,csvFileName)
         else:
-            print("Failed on attempt" + str(self.next_count))
             return
 
     def getNextTweets_fromTwurl(self,Next,TextFileName,csvFileName):
+        os.chdir(os.path.join(self.path,self.input_directory))
         cmd = 'twurl \"/1.1/tweets/search/30day/Test.json\" -A \"Content-Type: application/json\" -d \'{\"query\":\"#TwitchBlackout lang:en\",\"maxResults\":\"100\",\"fromDate\":\"202006230000\",\"toDate\":\"202007142359\",\"next\":' + Next + '}\' > '  + TextFileName + ".txt"
-        print(cmd)
-        print(csvFileName)
+        os.system(cmd)
         self.tweets_JSONtoCSV(TextFileName,csvFileName)
     
     def AppendCSVs(self,combinedFileName,directory,extension):
@@ -314,7 +317,7 @@ def main():
 
     twurl = TwitterAPITwurl(path,input_directory,output_directory)
             # use file names to be #TwitchBlackout_0.txt and then increment the 0 on both
-    twurl.tweets_JSONtoCSV(textFileName = "testTweet_0", csvFileName = "tweetTest_0")
+    twurl.firstTwurlCMD(textFileName = "#TwitchBlackout_0", csvFileName = "#TwitchBlackout_0")
     #twurl.AppendCSVs("Animal.csv","Test_AppendFunction","csv")
 
 if __name__ == "__main__":
