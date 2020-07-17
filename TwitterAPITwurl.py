@@ -6,9 +6,12 @@ import os
 import glob
 import pandas as pd
 import cleanTweets
+from datetime import date
 from cleanTweets import cleanTweets
 
 class TwitterAPITwurl(cleanTweets):
+
+    todaysDate = re.sub(r'[%s]' % re.escape(r"-"), '', str(date.today())) + "0000"
 
     def __init__(self,path,input_directory,output_directory):
         self.path = path
@@ -16,16 +19,18 @@ class TwitterAPITwurl(cleanTweets):
         self.output_directory = output_directory
 
         self.next_count = 0
+        self.todaysDate = re.sub(r'[%s]' % re.escape(r"-"), '', str(date.today())) + "0000"
 
-    def firstTwurlCMD(self,textFileName,csvFileName):
+    def firstTwurlCMD(self,query,textFileName,csvFileName,lang = "en",maxResults = "100",fromDate = "202001010000" ,toDate = todaysDate):
         os.chdir(os.path.join(self.path,self.input_directory))
-        cmd = 'twurl \"/1.1/tweets/search/30day/Test.json\" -A \"Content-Type: application/json\" -d \'{\"query\":\"#TwitchBlackout lang:en\",\"maxResults\":\"100\",\"fromDate\":\"202006230000\",\"toDate\":\"202007142359\"}\' > '  + textFileName + ".txt"
-        os.system(cmd)
-        self.tweets_JSONtoCSV(textFileName,csvFileName)
+        cmd = 'twurl \"/1.1/tweets/search/30day/Test.json\" -A \"Content-Type: application/json\" -d \'{\"query\": \"' + query + ' lang:' + lang + '\",\"maxResults\":\"' + maxResults + '\",\"fromDate\":\"' + fromDate + '\",\"toDate\":\"' + toDate + '\"}\' > ' + textFileName + ".txt"
+        #os.system(cmd)
+        print(cmd)
+        self.tweets_JSONtoCSV(query,textFileName,csvFileName, lang=lang ,maxResults = maxResults ,fromDate = fromDate ,toDate = toDate)
 
     # After doing a tweet search in Twurl, you can save it to a text file, and then run this function
     # To put it in a similar format as up above in csv
-    def tweets_JSONtoCSV(self,textFileName,csvFileName):
+    def tweets_JSONtoCSV(self,query,textFileName,csvFileName,lang = "en",maxResults = "100",fromDate = "202001010000" ,toDate = todaysDate):
         self.next_count += 1
         # Get Text from the input directory 
         os.chdir(os.path.join(self.path,self.input_directory))
@@ -35,7 +40,7 @@ class TwitterAPITwurl(cleanTweets):
         # Put csv in the output directory
         os.chdir(os.path.join(self.path,self.output_directory))
         csvFile = open(csvFileName + ".csv", 'w',encoding="utf-8")
-        fieldnames = ['user_id','date','twitter_id','text','media','likes','retweets','related_hashtags','external_links','tweet_link']
+        fieldnames = ['user_id','date','twitter_id','text','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term']
         writer = csv.DictWriter(csvFile,fieldnames=fieldnames) 
         writer.writeheader()
 
@@ -50,6 +55,7 @@ class TwitterAPITwurl(cleanTweets):
             parsed_tweet = {}
             user = tweet['user']
 
+            
             tags = ""
             imgTag = ""
             url_link = ""
@@ -58,6 +64,8 @@ class TwitterAPITwurl(cleanTweets):
             parsed_tweet['date'] = str(tweet['created_at']) 
             parsed_tweet['twitter_id'] = tweet['id_str']
             parsed_tweet['tweet_link'] = "https://twitter.com/id/status/" + tweet['id_str']
+            parsed_tweet["search_term"] = query
+
             try:
                 parsed_tweet['text'] = super().remove_emoji(super().clean_tweet(tweet['extended_tweet']['full_text'].encode('utf-8').decode('utf-8')))               
             except:
@@ -130,16 +138,16 @@ class TwitterAPITwurl(cleanTweets):
             # Both file names will be in format 'search'_i.xxx where search is the term we searched and i is number of times we ran it
             textFileName = textFileName[0:len(textFileName)-2] + "_" + str(self.next_count)
             csvFileName = csvFileName[0:len(csvFileName)-2] + "_" + str(self.next_count)
-            self.getNextTweets_fromTwurl(nextPageRequest,textFileName,csvFileName)
+            self.getNextTweets_fromTwurl(query,nextPageRequest,textFileName,csvFileName, lang=lang ,maxResults = maxResults ,fromDate = fromDate ,toDate = toDate)
         else:
             return
 
-    def getNextTweets_fromTwurl(self,Next,TextFileName,csvFileName):
+    def getNextTweets_fromTwurl(self,query,Next,textFileName,csvFileName,lang = "en",maxResults = "100",fromDate = "202001010000" ,toDate = todaysDate):
         os.chdir(os.path.join(self.path,self.input_directory))
-        cmd = 'twurl \"/1.1/tweets/search/30day/Test.json\" -A \"Content-Type: application/json\" -d \'{\"query\":\"#TwitchBlackout lang:en\",\"maxResults\":\"100\",\"fromDate\":\"202006230000\",\"toDate\":\"202007142359\",\"next\":' + Next + '}\' > '  + TextFileName + ".txt"
+        cmd = 'twurl \"/1.1/tweets/search/30day/Test.json\" -A \"Content-Type: application/json\" -d \'{\"query\": \"' + query + ' lang:' + lang + '\",\"maxResults\":\"' + maxResults + '\",\"fromDate\":\"' + fromDate + '\",\"toDate\":\"' + toDate + '\",\"next\":' + Next + '}\' > ' + textFileName + ".txt"
         #os.system(cmd)
         print(cmd)
-        self.tweets_JSONtoCSV(TextFileName,csvFileName)
+        self.tweets_JSONtoCSV(query,textFileName,csvFileName, lang=lang ,maxResults = maxResults ,fromDate = fromDate ,toDate = toDate)
     
     def AppendCSVs(self,combinedFileName,directory,extension):
         os.chdir(directory)
@@ -160,9 +168,12 @@ def main():
     input_directory = "input"
     output_directory = "output"
 
+    # cmd = 'twurl \"/1.1/tweets/search/30day/Test.json\" -A \"Content-Type: application/json\" -d \'{\"query\": \"#TwitchBlackout lang:en\",\"maxResults\":\"100\",\"fromDate\":\"202006230000\",\"toDate\":\"202007142359\"}\' > '  + textFileName + ".txt"
+
+    search = "#TwitchBlackout"
     twurl = TwitterAPITwurl(path,input_directory,output_directory)
     # use file names to be #TwitchBlackout_0.txt and then increment the 0 on both
-    twurl.firstTwurlCMD(textFileName = "#TwitchBlackout_0", csvFileName = "#TwitchBlackout_0")
+    twurl.firstTwurlCMD(search,textFileName = search + "_0", csvFileName = search + "_0",fromDate="202006230000", toDate= "202007142359")
     #twurl.AppendCSVs("Animal.csv","Test_AppendFunction","csv")
 
 if __name__ == "__main__":

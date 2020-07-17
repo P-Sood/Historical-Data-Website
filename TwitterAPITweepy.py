@@ -35,7 +35,7 @@ class TwitterAPITweepy(cleanTweets):
 
         tweets = []
         csvFile = open(csvFileName, 'w',encoding="utf-8")
-        fieldnames = ['user_id','date','twitter_id','text','media','likes','retweets','related_hashtags','external_links','tweet_link']
+        fieldnames = ['user_id','date','twitter_id','text','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term']
         writer = csv.DictWriter(csvFile,fieldnames=fieldnames) 
         writer.writeheader()
 
@@ -50,11 +50,16 @@ class TwitterAPITweepy(cleanTweets):
             tags = ""
             imgTag = ""
             url_link = ""
+            query = ""
 
             parsed_tweet['twitter_id'] =  tweet.id_str
             parsed_tweet['user_id'] =  user.screen_name
             parsed_tweet['retweets'] =  str(tweet.retweet_count) 
-            parsed_tweet['date'] = str(tweet.created_at) 
+            parsed_tweet['date'] = str(tweet.created_at)
+
+            for term in searchParameters:
+                query += term
+            parsed_tweet["search_term"] = query
 
             parsed_tweet['text'] = super().remove_emoji(super().clean_tweet(tweet.full_text)) 
 
@@ -110,9 +115,6 @@ class TwitterAPITweepy(cleanTweets):
             writer.writerow(parsed_tweet)
         return tweets 
 
-
-
-# These are example keys, I have since made new keys after this mistake
 
 def main():
     consumer_key = ''
