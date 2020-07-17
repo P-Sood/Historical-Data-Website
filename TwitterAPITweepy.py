@@ -112,8 +112,7 @@ class TwitterAPITweepy(cleanTweets):
 
 
 
-
-  
+# These are example keys, I have since made new keys after this mistake
 
 def main():
     consumer_key = ''
