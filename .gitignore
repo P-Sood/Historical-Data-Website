@@ -1,2 +1,6 @@
-API_keys.txt
-cmdLineTwurl.txt
+*.txt
+*.csv
+*.xlsx
+.venv/
+.vscode/
+TEST_IGNORE/

@@ -7,6 +7,7 @@ import json
 import os
 import glob
 import pandas as pd
+import pymongo
 
 # Tweepy and Twurl tweet JSON format is different
 # Tweepy and Twurl have the same attributes you just get them differently
