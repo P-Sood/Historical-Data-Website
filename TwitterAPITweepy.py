@@ -116,10 +116,10 @@ class TwitterAPITweepy(cleanTweets):
   
 
 def main():
-    consumer_key = 'elY444AwQBo6QhRto8kortUnj'
-    consumer_secret = 'jFF49TarfmOjLzWTNvEVWlFv66ICov6JruKWFWAIrJmrcUpb8Q'
-    access_token = '1278757147740794880-rmrtRx8tk7IiBBm4bRSDcsExeOxTSd'
-    access_token_secret = 'BAmLKrGeuQSHZl5av6MpDjMUS6oFuesPOGKVNOu91TRnu'
+    consumer_key = ''
+    consumer_secret = ''
+    access_token = ''
+    access_token_secret = ''
     search = "#beaver"
 
     api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret)
