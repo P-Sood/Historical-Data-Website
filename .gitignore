@@ -3,4 +3,3 @@
 *.xlsx
 .venv/
 .vscode/
-TEST_IGNORE/
