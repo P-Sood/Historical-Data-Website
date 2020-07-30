@@ -42,12 +42,6 @@ class cleanTweets():
         tweet = re.sub(r'\s+', ' ', tweet)  # remove extra whitespace
         tweet = " ".join(tweet.split()) # Removes all newline and tab charachters in the text 
         return tweet
-
-    def isRetweet(self,tweet):
-        if (re.match(r'RT',tweet) != None):
-            return True
-        else:
-            return False
     
     def getExternalLinks(self,tweet):
         return re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tweet)

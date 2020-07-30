@@ -4,6 +4,7 @@ import csv
 import os
 from datetime import date
 from cleanTweets import cleanTweets
+from wordFrequency import wordFrequency
 from database import DataBase
 import backend_config as config
 from urllib.parse import urlparse
@@ -44,7 +45,7 @@ class TwitterAPITweepy(cleanTweets,DataBase):
     
         tweets = []
         csvFile = open(csvFileName, 'w',encoding="utf-8",newline="")
-        fieldnames = ['_id','user_id','date','is_retweet','text','emoji','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term']
+        fieldnames = ['_id','user_id','date','is_retweet','is_thread','text','emoji','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term']
         writer = csv.DictWriter(csvFile,fieldnames=fieldnames) 
         writer.writeheader()
 
@@ -60,10 +61,13 @@ class TwitterAPITweepy(cleanTweets,DataBase):
             parsed_tweet = {
                 '_id':  tweet.id_str,
                 'user_id':  user.screen_name,
+                'is_retweet': "False",
+                'is_thread': "False",
                 'date': str(tweet.created_at),
                 'text': super().clean_tweet(super().remove_emoji(tweet.full_text)).strip(),
                 'emoji': super().get_emoji(tweet.full_text),
                 'related_hashtags': [],
+                'external_links': [],
                 'search_term': searchParameters,
                 }
 
@@ -73,6 +77,17 @@ class TwitterAPITweepy(cleanTweets,DataBase):
                 related_hashtags = "#" + hashtag['text']
                 if (related_hashtags.lower() not in query):
                     parsed_tweet['related_hashtags'].append(related_hashtags)
+
+            try:
+                if (tweet.retweeted_status.in_reply_to_status_id == None):
+                    parsed_tweet['is_thread'] = "False"
+                else:
+                    parsed_tweet['is_thread'] = "True"
+            except:
+                if (tweet.in_reply_to_status_id == None):
+                    parsed_tweet['is_thread'] = "False"
+                else:
+                    parsed_tweet['is_thread'] = "True"
             
 
             # The retweeted tweet has the actual likes of the tweet, tweets that are retweets usually have 0 likes and hold no info
@@ -91,49 +106,21 @@ class TwitterAPITweepy(cleanTweets,DataBase):
                 parsed_tweet['is_retweet'] = "False"
             
 
-#            try:
-#                listAddedLinks_retweets = re.findall(r'http\S+\s*', tweet.retweeted_status.full_text)
-#                listAddedLinks = ""
-#            except:
-#                listAddedLinks = re.findall(r'http\S+\s*', tweet.full_text)
-#                listAddedLinks_retweets = ""
-#
-#            if (listAddedLinks_retweets != ""):
-#                parsed_tweet['external_links'] = []
-#                for i in range(len(listAddedLinks_retweets)-1):
-#                    parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks_retweets[i].replace('\n',"")))
-#            elif(listAddedLinks != ""):
-#                parsed_tweet['external_links'] = []
-#                for i in range(len(listAddedLinks)):
-#                    parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks[i].replace('\n',"")))
-#            else:
-#                parsed_tweet['external_links'] = []
-#                parsed_tweet['external_links'].append("")
-
+            # this code is very slow so we can revert it back but this works 100% where it was more 80% but MUCH faster 
             try:
                 listAddedLinks = super().getExternalLinks(tweet.retweeted_status.full_text)
-                parsed_tweet['external_links'] = []
                 for i in range(len(listAddedLinks)):
+                    # I get the t.co url and I unshorten it to check if it actually redirects us back to twitter
+                    # Then i just put that into my list
                     url = super().unshorten_url(listAddedLinks[i])
                     x = urlparse(url)
                     if (x.netloc != "twitter.com"):
                         parsed_tweet['external_links'].append(super().remove_emoji(url.replace('\n',"")))
             except:   
                 listAddedLinks = super().getExternalLinks(tweet.full_text)
-                parsed_tweet['external_links'] = []
                 for i in range(len(listAddedLinks)):
                     parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks[i].replace('\n',"")))
 
-            
-            #urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tweet.full_text)
-            #urls = re.findall(r'http\S+\s*', tweet.full_text)
-
-
-
-
-                
-                        
-                        
 
             # Next block of code checks to see if tweet has a video, print link. If not check if tweet has multiple images, print img links, 
             # if not then check if just 1 media image, print img, if nothing then print empty
@@ -175,7 +162,11 @@ def main():
 
 
     api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret)#,mongoDB)
-    api.get_tweets_tweepy(csvFileName = "tweets_"+ search + ".csv" , searchParameters = [search],count=5)
+    api.get_tweets_tweepy(csvFileName = "tweets_" + search + ".csv" , searchParameters = [search],count=2)
+
+    wordFreq = wordFrequency()
+
+    wordFreq.getWordFreq_toText(textFileName = "WordCount" + search + ".txt" , csvFileName = "tweets_" + search + ".csv")
 
 if __name__ == "__main__":
     main()
