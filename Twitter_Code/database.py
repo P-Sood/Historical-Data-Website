@@ -11,7 +11,7 @@ class DataBase():
 
     def connection(self):
         try:
-            self.cluster = MongoClient("mongodb+srv://" + self.username + ":" + self.password + "@cluster0.luyxz.azure.mongodb.net/<dbname>?retryWrites=true&w=majority")
+            self.cluster = MongoClient("mongodb+srv://" + self.username + ":" + self.password + "@cluster0.luyxz.azure.mongodb.net/" + self.database_name + "?retryWrites=true&w=majority")
             self.database = self.cluster[self.database_name]
             self.collection = self.database[self.collection_name]
         except:

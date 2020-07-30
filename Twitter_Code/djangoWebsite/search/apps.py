@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class SearchpageConfig(AppConfig):
-    name = 'SearchPage'
+class searchConfig(AppConfig):
+    name = 'search'

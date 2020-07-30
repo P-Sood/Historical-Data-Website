@@ -1,14 +1,17 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 
+posts = [
+    {
+        ''
+    }
+]
 
 # IT would take so much time to actually make an html page 
 # We use something named templates
 
 def home(request):
-    return HttpResponse('<h1> Search Page </h1>')
+    return render(request,'search/home.html')
 
 def tips(request):
-    return HttpResponse('<h2> Tips and Tricks </h2>')
+    return render(request,'search/tips.html')
 
-# Create your views here.

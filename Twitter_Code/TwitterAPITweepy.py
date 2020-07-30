@@ -5,7 +5,8 @@ import os
 from datetime import date
 from cleanTweets import cleanTweets
 from database import DataBase
-import config
+import backend_config as config
+from urllib.parse import urlparse
 
 # Tweepy and Twurl tweet JSON format is different
 # Tweepy and Twurl have the same attributes you just get them differently
@@ -39,26 +40,29 @@ class TwitterAPITweepy(cleanTweets,DataBase):
 
         self.Auth()
 
+        lenSearch = len(searchParameters)
+    
         tweets = []
         csvFile = open(csvFileName, 'w',encoding="utf-8",newline="")
-        fieldnames = ['_id','user_id','date','text','emoji','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term']
+        fieldnames = ['_id','user_id','date','is_retweet','text','emoji','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term']
         writer = csv.DictWriter(csvFile,fieldnames=fieldnames) 
         writer.writeheader()
+
+        query = []
+        for i in range(lenSearch):
+            query.append(searchParameters[i].lower())
 
         # If you want to add another field to the csv file, follow code below and then put it in fieldnames as well 
 
         for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
             user =  tweet.user
-            # Making sure there is no link and then adding keys to my dictionary with specific values to be written to csv
-
-            
+            # Making sure there is no link and then adding keys to my dictionary with specific values to be written to csv            
             parsed_tweet = {
                 '_id':  tweet.id_str,
                 'user_id':  user.screen_name,
                 'date': str(tweet.created_at),
                 'text': super().clean_tweet(super().remove_emoji(tweet.full_text)).strip(),
                 'emoji': super().get_emoji(tweet.full_text),
-                'external_links': [],
                 'related_hashtags': [],
                 'search_term': searchParameters,
                 }
@@ -66,8 +70,9 @@ class TwitterAPITweepy(cleanTweets,DataBase):
             # With 240 max characters, this loop is O(120) // 120 number symbol characters and 120 alphanumeric characters that are the hashtag
             # In actuality max is like 10, but not every tweet has it
             for hashtag in tweet.entities['hashtags']:
-                tags =  "#" + hashtag['text'] 
-                parsed_tweet['related_hashtags'].append(tags)
+                related_hashtags = "#" + hashtag['text']
+                if (related_hashtags.lower() not in query):
+                    parsed_tweet['related_hashtags'].append(related_hashtags)
             
 
             # The retweeted tweet has the actual likes of the tweet, tweets that are retweets usually have 0 likes and hold no info
@@ -75,20 +80,58 @@ class TwitterAPITweepy(cleanTweets,DataBase):
             try:
                 parsed_tweet['likes'] = str(tweet.retweeted_status.favorite_count) 
                 parsed_tweet['tweet_link'] = "https://twitter.com/id/status/" + tweet.id_str 
+                parsed_tweet['retweets'] =  str(tweet.retweeted_status.retweet_count) 
 
-                listAddedLinks = re.findall(r'http\S+\s*', tweet.retweeted_status.full_text)
-                for i in range(len(listAddedLinks)-1):
-                    parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks[i].replace('\n',"")))
-
+                parsed_tweet['is_retweet'] = "True"
             except:
                 parsed_tweet['likes'] =  str(tweet.favorite_count) 
                 parsed_tweet['tweet_link'] = "https://twitter.com/id/status/" + tweet.id_str 
+                parsed_tweet['retweets'] =  str(tweet.retweet_count) 
 
-                listAddedLinks = re.findall(r'http\S+\s*', tweet.full_text)
+                parsed_tweet['is_retweet'] = "False"
+            
+
+#            try:
+#                listAddedLinks_retweets = re.findall(r'http\S+\s*', tweet.retweeted_status.full_text)
+#                listAddedLinks = ""
+#            except:
+#                listAddedLinks = re.findall(r'http\S+\s*', tweet.full_text)
+#                listAddedLinks_retweets = ""
+#
+#            if (listAddedLinks_retweets != ""):
+#                parsed_tweet['external_links'] = []
+#                for i in range(len(listAddedLinks_retweets)-1):
+#                    parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks_retweets[i].replace('\n',"")))
+#            elif(listAddedLinks != ""):
+#                parsed_tweet['external_links'] = []
+#                for i in range(len(listAddedLinks)):
+#                    parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks[i].replace('\n',"")))
+#            else:
+#                parsed_tweet['external_links'] = []
+#                parsed_tweet['external_links'].append("")
+
+            try:
+                listAddedLinks = super().getExternalLinks(tweet.retweeted_status.full_text)
+                parsed_tweet['external_links'] = []
+                for i in range(len(listAddedLinks)):
+                    url = super().unshorten_url(listAddedLinks[i])
+                    x = urlparse(url)
+                    if (x.netloc != "twitter.com"):
+                        parsed_tweet['external_links'].append(super().remove_emoji(url.replace('\n',"")))
+            except:   
+                listAddedLinks = super().getExternalLinks(tweet.full_text)
+                parsed_tweet['external_links'] = []
+                for i in range(len(listAddedLinks)):
+                    parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks[i].replace('\n',"")))
+
+            
+            #urls = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tweet.full_text)
+            #urls = re.findall(r'http\S+\s*', tweet.full_text)
+
+
+
+
                 
-                if (len(listAddedLinks)>1):
-                    for i in range(len(listAddedLinks)-1):
-                        parsed_tweet['external_links'].append(super().remove_emoji(listAddedLinks[i].replace('\n',"")))
                         
                         
 
@@ -121,14 +164,12 @@ def main():
     consumer_secret = config.Twitter['Consumer_Secret']
     access_token = config.Twitter['Access_Token']
     access_token_secret = config.Twitter['Access_Secret']
-    search = "#Animals"
+    search = "#Portland"
 
     UserName = config.MongoDB['UserName']
     Password = config.MongoDB['Password']
     database = config.MongoDB['Database']
     collection = config.MongoDB['Collection']
-
-    print(UserName,Password,database,collection)
 
     mongoDB = DataBase(UserName,Password,database,collection)
 
