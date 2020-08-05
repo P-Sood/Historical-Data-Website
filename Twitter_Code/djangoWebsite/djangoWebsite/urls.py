@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include 
+from django.contrib.auth import views as auth_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Using no path name means that search page is the first page 
-    path('', include('search.urls'))
+    path('', include('search.urls')),
+    path('login/', auth_view.LoginView.as_view(), name = "login"  )
+
 ]

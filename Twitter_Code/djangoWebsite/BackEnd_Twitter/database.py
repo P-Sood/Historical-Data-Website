@@ -11,7 +11,9 @@ class DataBase():
 
     def connection(self):
         try:
-            self.cluster = MongoClient("mongodb+srv://" + self.username + ":" + self.password + "@cluster0.luyxz.azure.mongodb.net/" + self.database_name + "?retryWrites=true&w=majority")
+            # This is to connect to the cloud
+            #self.cluster = MongoClient("mongodb+srv://" + self.username + ":" + self.password + "@cluster0.luyxz.azure.mongodb.net/" + self.database_name + "?retryWrites=true&w=majority")
+            self.cluster = MongoClient( host='localhost' ,port=27017)
             self.database = self.cluster[self.database_name]
             self.collection = self.database[self.collection_name]
         except:
@@ -30,6 +32,8 @@ class DataBase():
         except:
             for result in results:
                 print(result) 
+        finally:
+            return results
 
     def count(self,query):
         numDocuments = self.collection.count_documents(query)

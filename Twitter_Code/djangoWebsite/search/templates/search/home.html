@@ -1,9 +1,86 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title> LOL </title>
-  </head>
-  <body>
-    <h1> SOMETHING  </h1>
-  </body>
-</html>
+{% extends "search/base.html" %}
+
+  {% block title %}
+    <title>
+      Insert Data
+    </title>
+  {% endblock title %}
+
+  {% block header %}
+    <h1> 
+      Tips Page
+    </h1>
+  {% endblock header %}
+
+  {% block input %}
+
+
+  <form method="post">
+    <!--
+    <input type="text" name="search" placeholder="Search..." required />
+    <br>
+    <input type="text" name="dateFrom" placeholder="YYYY-MM-DD" >
+    <br>
+    <input type="text" name="dateUntil" placeholder="YYYY-MM-DD"  >
+    <br>
+    -->
+    {%  csrf_token  %}
+    {{  form.as_p  }}
+    
+    <input type="submit" class="btn" value="Click" name="mybtn">
+    <br>
+   </form>
+
+
+
+<!--
+
+  <form action="" method="post"> 
+    {%  csrf_token  %}
+    <label for="search"><b>Add to Database</b></label>
+    <br>
+    <input id="query" type="text" name = "search" value="{{  search  }}">
+    <input type="submit" placeholder="Insert..." required>
+  </form>
+
+  <form action="" method="POST">
+    {%  csrf_token  %}
+    <label for="dateFrom"><b>From...</b></label>
+    <br>
+    >
+  </form>
+
+  <form action="" method="POST">
+    {%  csrf_token  %}
+    <label for="dateUntil"><b>To...</b></label>
+    <br>
+     required>
+  </form>
+
+  <form action="" method="get">
+    <input type="submit" class="button" value="Click" name="mybtn" >
+   </form>
+   -->
+
+  {% endblock input %}
+
+  {% block test %}
+  
+    {% for name in UserNames %}
+
+    <h1>
+      {{ name.userName }}
+    </h1>
+
+    {%  endfor %}
+
+    {% for tweet in Tweets %}
+
+    <p>
+      {{ tweet.keyData.text }}
+      {{ tweet.related_hashtags }}
+    </p>
+
+    {%  endfor %}
+
+  {% endblock test %}

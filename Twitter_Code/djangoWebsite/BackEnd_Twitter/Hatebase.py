@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 from hatebase import HatebaseAPI
-import config
+import backend_config as config
 from sys import version_info
 python_version = version_info.major
 

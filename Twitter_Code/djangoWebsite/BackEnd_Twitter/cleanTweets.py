@@ -35,10 +35,14 @@ class cleanTweets():
 
     def clean_tweet(self,tweet):
         tweet = re.sub(r'http\S+\s*', '', tweet)  # remove URLs
+        
         tweet = re.sub(r'RT|cc', '', tweet)  # remove RT and cc
-        tweet = re.sub(r'#\S+', '', tweet)  # remove hashtags
-        tweet = re.sub(r'@\S+', '', tweet)  # remove mentions
-        tweet = re.sub(r'[%s]' % re.escape(r"""!"$%&'()*+,-./:;<=>?[\]^_`@{|}~#"""), ' ', tweet)  # remove punctuations// iF YOU comment out mentions make sure to take out the '@' symbol from here
+
+        # tweet = re.sub(r'#\S+', '', tweet)  # remove hashtags
+
+
+        # tweet = re.sub(r'@\S+', '', tweet)  # remove mentions # This removes all mentions, want to remove the first one if its there, but like the retweet one, not one that would make the text look weird
+        tweet = re.sub(r'[%s]' % re.escape(r"""!"$%&'()*+,-./:;<=>?'[\]^_`@{|}~"""), ' ', tweet)  # remove punctuations// iF YOU comment out mentions make sure to take out the '@' symbol from here
         tweet = re.sub(r'\s+', ' ', tweet)  # remove extra whitespace
         tweet = " ".join(tweet.split()) # Removes all newline and tab charachters in the text 
         return tweet
@@ -48,3 +52,20 @@ class cleanTweets():
 
     def unshorten_url(self,url):
         return requests.head(url, allow_redirects=True).url
+    
+    def removeLastHashtag(self,tweet):
+        *beginnning, last = tweet.split()
+        if ("#" in last):
+            tweet = ' '.join(beginnning)
+            self.removeLastHashtag(tweet)
+        else:
+            return tweet
+    
+    def removeFirstMention(self,tweet):
+        pass
+
+        
+
+
+
+
