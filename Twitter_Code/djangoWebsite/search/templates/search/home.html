@@ -1,22 +1,22 @@
 {% extends "search/base.html" %}
 
 
+{%  load crispy_forms_tags  %}
+
   {% block input %}
+    <div class="container" >
+      <h1> Add to Database  </h1>
+      {%  crispy Inputform Inputform.helper  %}
+    </div>
 
-  <form method="POST">
-    {% csrf_token %}
-    {{Inputform}}
-    <button type="submit">
-      Search
-    </button>
-  </form>
-
-  <form method="GET">
-    {% csrf_token %}
-    {{Searchform}}
-    <button type="submit">
-      Download CSV
-    </button>
-  </form>
 
   {% endblock input %}
+
+  {% block query %}
+    <div class="container"  >
+      <h1> 
+        Search Database  
+      </h1>
+      {%  crispy Searchform Searchform.helper  %}
+    </div>
+  {% endblock query %}

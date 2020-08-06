@@ -38,16 +38,15 @@ def home(request):
             input_ = Inputform.cleaned_data['input_']
             toDate_ = Inputform.cleaned_data['toDate']
             fromDate_ = Inputform.cleaned_data['fromDate']
+            count_ = Inputform.cleaned_data['count']
             if( is_date(toDate_) and is_date(fromDate_) ):
-                runTweepy().queryTweet_Tweepy(input_,fromDate_,toDate_)
+                runTweepy().queryTweet_Tweepy(input_,fromDate_,toDate_,count_)
     
     if request.method == 'GET':
         Searchform = Query(request.GET)
         if Searchform.is_valid():
             search = Searchform.cleaned_data['searchDB'] 
-            print("Before csv function")
             return downloadCSV(search)
-            print("PLS no error")
 
     context = {
         'Inputform': Inputform,

@@ -8,7 +8,7 @@ class runTweepy():
     def __init__(self):
         pass
 
-    def queryTweet_Tweepy(self, search , fromDate, toDate ):
+    def queryTweet_Tweepy(self, search , fromDate, toDate, count ):
         consumer_key = config.Twitter['Consumer_Key']
         consumer_secret = config.Twitter['Consumer_Secret']
         access_token = config.Twitter['Access_Token']
@@ -22,5 +22,5 @@ class runTweepy():
 
         mongoDB = DataBase(UserName,Password,database,collection)
         api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret,mongoDB)
-        api.tweetsDjango_database(search,since=fromDate, until=toDate,count = 2)
+        api.tweetsDjango_database(search,since=fromDate, until=toDate,count = count)
 

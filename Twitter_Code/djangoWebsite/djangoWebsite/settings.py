@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     
 ]
+
 
 
 MIDDLEWARE = [
@@ -55,6 +57,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'djangoWebsite.urls'
+
+LOGIN_REDIRECT_URL = '/'
+
 
 TEMPLATES = [
     {
