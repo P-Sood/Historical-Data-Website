@@ -167,7 +167,7 @@ class TwitterAPITweepy(cleanTweets,DataBase):
             writer.writerow(parsed_tweet)
         return tweets 
 
-    def tweetsDjango_database(self, searchParameters , since = "2020-01-01" , until = str(date.today()), count = 5):
+    def tweetsDjango_database(self, searchParameters , since = "2020-01-01" , until = str(date.today()), count = 2):
 
         self.Auth()
 

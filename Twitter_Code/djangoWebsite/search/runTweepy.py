@@ -22,5 +22,5 @@ class runTweepy():
 
         mongoDB = DataBase(UserName,Password,database,collection)
         api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret,mongoDB)
-        api.tweetsDjango_database(search,since=fromDate, until=toDate)
+        api.tweetsDjango_database(search,since=fromDate, until=toDate,count = 2)
 

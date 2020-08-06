@@ -6,7 +6,6 @@ from djongo.models import fields
 
 
 """
-# Need to implement the fact that some of these are lists, in Tweepy code I made it so only gives us just one element so nothing gets ruined 
 
 class data(models.Model):
     _id = models.CharField(max_length=30 , primary_key = True)
