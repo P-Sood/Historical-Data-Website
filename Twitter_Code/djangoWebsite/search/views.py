@@ -62,7 +62,11 @@ def downloadCSV(search):
     writer.writerow(['_id','user_id','date','is_retweet','is_thread','text','emoji','media','likes',
         'retweets','related_hashtags','external_links','tweet_link','search_term'])
     try:
-        for tweet in Twitter_data.objects.all().filter(related_hashtags__contains = search):
+        q1 = data.objects.all().filter(search_term__contains = search)
+        print("This is what data object holds : \n", len(q1))
+        for x in q1:
+            tweet = Twitter_data.objects.get(keyData__exact = x._id)
+        #for tweet in Twitter_data.objects.all().filter(related_hashtags__contains = search):
             parsed_tweet = {
                 '_id' : tweet.keyData._id,
                 'user_id' : tweet.keyData.user_id,
