@@ -33,17 +33,24 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'search.apps.searchConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Everything below I have added
+    'search.apps.searchConfig',
     'crispy_forms',
+    #'djcelery',
+    #'kombu.transport.django',
     
 ]
-
+"""
+import djcelery
+djcelery.setup_loader()
+BROKER_URL = "django://"
+"""
 
 
 MIDDLEWARE = [
@@ -90,8 +97,8 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': config.MongoDB['Name'],
         'HOST': config.MongoDB['Host'],
-        'USER':  config.MongoDB['UserName'],
-        'PASSWORD': config.MongoDB['Password'],
+        #'USER':  config.MongoDB['UserName'],
+        #'PASSWORD': config.MongoDB['Password'],
         # 'PORT': config.MongoDB['Port'],
     }
 }
@@ -142,3 +149,8 @@ STATICFILES_FINDERS = [
 STATICFILES_DIRS = (
     os.path.join(os.path.dirname('style.css'), 'static').replace('\\','/'),
 )
+
+CELERY_BROKER_URL = 'redis://h:pbb85df8420cda45653e88cc8c63848cacd9f01a968513e12a4f72a087129e59b@ec2-3-94-63-99.compute-1.amazonaws.com:6649'
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"

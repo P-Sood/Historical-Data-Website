@@ -1,5 +1,5 @@
 from .models import Twitter_data,data
-from .runTweepy import runTweepy
+from .tasks import queryTweet_Tweepy
 from django.shortcuts import render
 from django.template import RequestContext
 
@@ -40,7 +40,10 @@ def home(request):
             fromDate_ = Inputform.cleaned_data['fromDate']
             count_ = Inputform.cleaned_data['count']
             if( is_date(toDate_) and is_date(fromDate_) ):
-                runTweepy().queryTweet_Tweepy(input_,fromDate_,toDate_,count_)
+                print("before")
+                queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
+                print("before")
+                #runTweepy().queryTweet_Tweepy(input_,fromDate_,toDate_,count_)
     
     if request.method == 'GET':
         Searchform = Query(request.GET)
