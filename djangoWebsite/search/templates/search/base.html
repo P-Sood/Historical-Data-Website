@@ -16,6 +16,7 @@
     {%  if user.is_authenticated  %}
       {% block query %}      {% endblock query %}
       {% block input %}      {% endblock input %}
+      {% block taskResults %}      {% endblock taskResults %}
     {%  else  %}
       {% block not_logged %}      {% endblock not_logged %}
     {%  endif  %}

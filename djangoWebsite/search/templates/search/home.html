@@ -30,3 +30,12 @@
     </div>
 
   {% endblock not_logged %}
+
+  {% block taskResults %}
+    {% if showButton %}
+      <button type="button">
+        <a href="/results">See Status of Task</a>
+      </button>
+    {% else %}
+    {% endif %}
+  {% endblock taskResults %}

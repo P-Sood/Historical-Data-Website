@@ -178,7 +178,6 @@ class TwitterAPITweepy(cleanTweets,DataBase):
             query.append(searchParameters[i].lower())
 
         # If you want to add another field to the csv file, follow code below and then put it in fieldnames as well 
-
         for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
             user =  tweet.user
             # Making sure there is no link and then adding keys to my dictionary with specific values to be written to csv            
@@ -299,6 +298,10 @@ class TwitterAPITweepy(cleanTweets,DataBase):
             newTweet.save()
 
         return tweets 
+
+    def numTweets(self, searchParameters , since = "2020-01-01" , until = str(date.today()), count = 2):
+        return len(tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items())
+
     
 def main():
     consumer_key = config.Twitter['Consumer_Key']

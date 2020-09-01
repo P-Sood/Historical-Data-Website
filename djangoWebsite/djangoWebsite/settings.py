@@ -25,9 +25,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config.Django['Key']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
+#DEBUG = False # Error with a black box view
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1', '50.92.253.114', 'djangoWebsite.com']
+
+DEBUG = True # Allow us to see error much better with white box view
 ALLOWED_HOSTS = []
+
+
 
 
 # Application definition
@@ -40,8 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Everything below I have added
-    'search.apps.searchConfig',
+    #'search.apps.searchConfig',
+    'search',
     'crispy_forms',
+    'django_celery_results',
+    'celery_progress',
     #'djcelery',
     #'kombu.transport.django',
     
@@ -150,7 +158,22 @@ STATICFILES_DIRS = (
     os.path.join(os.path.dirname('style.css'), 'static').replace('\\','/'),
 )
 
-CELERY_BROKER_URL = 'redis://h:pbb85df8420cda45653e88cc8c63848cacd9f01a968513e12a4f72a087129e59b@ec2-3-94-63-99.compute-1.amazonaws.com:6649'
-
+#CELERY_BROKER_URL = 'redis://h:pbb85df8420cda45653e88cc8c63848cacd9f01a968513e12a4f72a087129e59b@ec2-3-94-63-99.compute-1.amazonaws.com:6649'
+#BROKER_URL = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = 'json'
+
+BROKER_URL = 'mongodb://localhost:27017/Django'
+
+CELERY_RESULT_BACKEND = 'django-db'
+
+    # Here i add in the things to the database under the name "celery_taskmeta" but it dosent give me as much info
+    # As if i just leave it as "django-db" for some reason
+
+#CELERY_MONGODB_BACKEND_SETTINGS = {
+#    'database': 'Django',
+#    'taskmeta_collection': 'celery_taskmeta',
+#}
+#CELERY_RESULT_BACKEND = CELERY_MONGODB_BACKEND_SETTINGS
+

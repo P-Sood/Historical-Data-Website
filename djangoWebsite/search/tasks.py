@@ -3,6 +3,7 @@ from BackEnd_Twitter.database import DataBase
 import BackEnd_Twitter.backend_config as config
 from .models import Twitter_data
 from celery import shared_task
+from celery_progress.backend import ProgressRecorder
 
 @shared_task
 def queryTweet_Tweepy(search , fromDate, toDate, count ):
@@ -19,6 +20,8 @@ def queryTweet_Tweepy(search , fromDate, toDate, count ):
 
     mongoDB = DataBase(UserName,Password,database,collection)
     api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret,mongoDB)
+    numTweets = api.numTweets(search,since=fromDate, until=toDate,count = count)
+    progress_recorder = ProgressRecorder(self)
     api.tweetsDjango_database(search,since=fromDate, until=toDate,count = count)
     return None
 
