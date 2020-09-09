@@ -31,7 +31,8 @@ def home(request):
 
     Inputform = Search()
     Searchform = Query()
-
+    id = None
+ 
     if request.method == 'POST':
         Inputform = Search(request.POST)
         if Inputform.is_valid():
@@ -40,7 +41,8 @@ def home(request):
             fromDate_ = Inputform.cleaned_data['fromDate']
             count_ = Inputform.cleaned_data['count']
             if( is_date(toDate_) and is_date(fromDate_) ):
-                queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
+                task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
+                id = task.task_id
     
     if request.method == 'GET':
         Searchform = Query(request.GET)
@@ -51,6 +53,7 @@ def home(request):
     context = {
         'Inputform': Inputform,
         "Searchform" : Searchform,
+        "task_id": id,
     }
 
     return render(request,homeHTML,context)

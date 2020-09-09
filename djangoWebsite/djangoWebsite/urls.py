@@ -22,7 +22,7 @@ from django.contrib.auth import views as auth_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('search.urls')),
-    path('',include('django.contrib.auth.urls'))
-    path('celery-progress/',include("celery_progress.urls"))
+    path('',include('django.contrib.auth.urls')),
+    path('celery-progress/',include("celery_progress.urls")),
     
 ]
