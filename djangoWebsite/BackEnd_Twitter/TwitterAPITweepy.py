@@ -3,13 +3,14 @@ import re
 import csv
 import os
 from datetime import date
+import json
 
 from .cleanTweets import cleanTweets
 from .wordFrequency import wordFrequency
 from .database import DataBase
 #from .backend_config import backend_config as config
 
-from search.models import Twitter_data,data
+from search.models import Twitter_data,data,TwitterJSON
 
 from celery_progress.backend import ProgressRecorder
 
@@ -46,7 +47,7 @@ class TwitterAPITweepy(cleanTweets,DataBase):
         # if you add terms to the searchParams list, it will use the logical and gate
 
 
-    def tweetsDjango_database(self, searchParameters, progressRecorder ,since = "2020-01-01" , until = str(date.today()), count = 2):
+    def tweetsDjango_database(self,searchParameters, progressRecorder ,since = "2020-01-01" , until = str(date.today()), count = 2):
 
         self.Auth()
         lenSearch = len(searchParameters)
@@ -54,13 +55,14 @@ class TwitterAPITweepy(cleanTweets,DataBase):
         query = []
         for i in range(lenSearch):
             query.append(searchParameters[i].lower())
+        
 
         iteration = 0
-        results = tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items()
-        lenResults = sum(1 for _ in results)
+        #results = tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items()
+        #lenResults = sum(1 for _ in results)
         # If you want to add another field to the csv file, follow code below and then put it in fieldnames as well 
-        for tweet in results:
-            progressRecorder.set_progress(iteration,lenResults,"on iteration: " + iteration)
+        for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
+            #progressRecorder.set_progress(iteration,lenResults,"on iteration: " + str(iteration))
             iteration += 1
             user =  tweet.user
             # Making sure there is no link and then adding keys to my dictionary with specific values to be written to csv            
@@ -180,6 +182,9 @@ class TwitterAPITweepy(cleanTweets,DataBase):
                 
             newTweet.save()
 
+            JSON = TwitterJSON(_id = parsed_tweet['_id'], json = json.loads(json.dumps(tweet._json)))
+
+            JSON.save(using='MongoDB')
         return tweets 
   
 def main():

@@ -3,6 +3,8 @@ from .tasks import queryTweet_Tweepy
 from django.shortcuts import render
 from django.template import RequestContext
 
+from .runTweepy import queryTweet_TweepyTEST
+
 import csv
 from django.http import HttpResponse
 
@@ -41,6 +43,7 @@ def home(request):
             fromDate_ = Inputform.cleaned_data['fromDate']
             count_ = Inputform.cleaned_data['count']
             if( is_date(toDate_) and is_date(fromDate_) ):
+                # Need to do another check to see if info is already in the database
                 task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
                 id = task.task_id
     
@@ -87,7 +90,7 @@ def downloadCSV(search):
             }
             writer.writerow(parsed_tweet.values())
     except:
-        parsed_tweet = {  'bad' : "Error"  }
+        parsed_tweet = {  '_id' : "Error"  }
         writer.writerow(parsed_tweet.values())
 
     response['Content-Disposition'] = "attachment; filename= \"" + search + ".csv\""

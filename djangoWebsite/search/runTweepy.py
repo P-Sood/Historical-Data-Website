@@ -17,4 +17,6 @@ def queryTweet_TweepyTEST(search , fromDate, toDate, count ):
 
     mongoDB = DataBase(UserName,Password,database,collection)
     api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret,mongoDB)
+    print("Before going into backend")
     api.tweetsDjango_database(search,since=fromDate, until=toDate,count = count)
+    print("After going into backend")

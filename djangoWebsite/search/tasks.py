@@ -4,6 +4,7 @@ import BackEnd_Twitter.backend_config as config
 from .models import Twitter_data
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
+from django.db import connection
 
 @shared_task(bind = True)
 def queryTweet_Tweepy(self, search , fromDate, toDate, count ):

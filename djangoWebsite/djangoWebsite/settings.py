@@ -102,14 +102,23 @@ DATABASES = {
     'default': {
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config.PostgreSQL['Name'],
+        'HOST': config.PostgreSQL['Host'],
+        'USER':  config.PostgreSQL['UserName'],
+        'PASSWORD': config.PostgreSQL['Password'],
+        'PORT': config.PostgreSQL['Port'],
+    },
+    'MongoDB': {
         'ENGINE': 'djongo',
         'NAME': config.MongoDB['Name'],
         'HOST': config.MongoDB['Host'],
-        #'USER':  config.MongoDB['UserName'],
-        #'PASSWORD': config.MongoDB['Password'],
-        # 'PORT': config.MongoDB['Port'],
     }
 }
+
+DATABASE_ROUTERS = [
+    'databaseRouters.MongoDB_Router.MongoDB_Router', 
+]
 
 
 # Password validation
@@ -159,14 +168,19 @@ STATICFILES_DIRS = (
 )
 
 #CELERY_BROKER_URL = 'redis://h:pbb85df8420cda45653e88cc8c63848cacd9f01a968513e12a4f72a087129e59b@ec2-3-94-63-99.compute-1.amazonaws.com:6649'
-#BROKER_URL = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = 'json'
 
-BROKER_URL = 'mongodb://localhost:27017/Django'
 
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_BROKER_URL = 'mongodb://localhost:27017/Django'
+#CELERY_BROKER_URL = "sqla+postgresql://" + config.PostgreSQL['UserName'] + ":" + config.PostgreSQL['Password'] + "@localhost/Django"
+BROKER_URL = CELERY_BROKER_URL
+
+result_backend = 'db+postgresql://' + config.PostgreSQL['UserName'] + ":" + config.PostgreSQL['Password'] + "@localhost:5432/Django"
+#CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = result_backend
+
 
     # Here i add in the things to the database under the name "celery_taskmeta" but it dosent give me as much info
     # As if i just leave it as "django-db" for some reason
