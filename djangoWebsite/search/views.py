@@ -33,7 +33,7 @@ def home(request):
 
     Inputform = Search()
     Searchform = Query()
-    id = None
+    task_id = None
  
     if request.method == 'POST':
         Inputform = Search(request.POST)
@@ -45,7 +45,7 @@ def home(request):
             if( is_date(toDate_) and is_date(fromDate_) ):
                 # Need to do another check to see if info is already in the database
                 task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
-                id = task.task_id
+                task_id = task.task_id
     
     if request.method == 'GET':
         Searchform = Query(request.GET)
@@ -56,7 +56,7 @@ def home(request):
     context = {
         'Inputform': Inputform,
         "Searchform" : Searchform,
-        "task_id": id,
+        "task_id": task_id,
     }
 
     return render(request,homeHTML,context)
@@ -97,5 +97,12 @@ def downloadCSV(search):
 
     return response
 
-def tips(request):
-    return render(request, 'search/tips.html')
+def results(request):
+
+    task_id = request.POST.get('taskID',None)
+
+    context = {
+        'task_id': task_id
+    }
+
+    return render(request, 'search/celeryTasks.html',context)

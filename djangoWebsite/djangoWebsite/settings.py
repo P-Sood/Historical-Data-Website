@@ -115,10 +115,10 @@ DATABASES = {
         'HOST': config.MongoDB['Host'],
     }
 }
+# If I comment out the database routers line then I need to go into tweepy code in backend and take 
+# out the line that says I save the JSON in MongoDB
 
-DATABASE_ROUTERS = [
-    'databaseRouters.MongoDB_Router.MongoDB_Router', 
-]
+#DATABASE_ROUTERS = ['databaseRouters.MongoDB_Router.MongoDB_Router']
 
 
 # Password validation
@@ -167,20 +167,14 @@ STATICFILES_DIRS = (
     os.path.join(os.path.dirname('style.css'), 'static').replace('\\','/'),
 )
 
-#CELERY_BROKER_URL = 'redis://h:pbb85df8420cda45653e88cc8c63848cacd9f01a968513e12a4f72a087129e59b@ec2-3-94-63-99.compute-1.amazonaws.com:6649'
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = 'json'
 
-
-CELERY_BROKER_URL = 'mongodb://localhost:27017/Django'
-#CELERY_BROKER_URL = "sqla+postgresql://" + config.PostgreSQL['UserName'] + ":" + config.PostgreSQL['Password'] + "@localhost/Django"
+CELERY_BROKER_URL = "sqla+postgresql://" + config.PostgreSQL['UserName'] + ":" + config.PostgreSQL['Password'] + "@localhost:5432/Django"
 BROKER_URL = CELERY_BROKER_URL
-
-result_backend = 'db+postgresql://' + config.PostgreSQL['UserName'] + ":" + config.PostgreSQL['Password'] + "@localhost:5432/Django"
-#CELERY_RESULT_BACKEND = 'django-db'
+result_backend = 'django-db'
 CELERY_RESULT_BACKEND = result_backend
-
 
     # Here i add in the things to the database under the name "celery_taskmeta" but it dosent give me as much info
     # As if i just leave it as "django-db" for some reason

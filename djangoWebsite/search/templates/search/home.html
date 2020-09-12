@@ -33,16 +33,8 @@
   {% endblock not_logged %}
 
   {% block taskResults %}
-  <div class='progress-wrapper'>
-    <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
-  </div>
-  <div id="progress-bar-message">Waiting for progress to start...</div>
-  <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
-  <script> 
-  // vanilla JS version
-  document.addEventListener("DOMContentLoaded", function () {
-      var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
-      CeleryProgressBar.initProgressBar(progressUrl);
-    });
-  </script>
+  <form action="/results/" method="POST" id="TaskQueue">
+    {%  csrf_token  %}
+      <button type="submit" name="taskID" value="{{ task_id }}" form="TaskQueue"></button>    
+  </form>
   {% endblock taskResults %}

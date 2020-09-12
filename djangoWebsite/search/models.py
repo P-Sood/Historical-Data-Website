@@ -1,11 +1,13 @@
-from djongo import models
-from djongo.models import fields
-from djongo.models.json import JSONField
+from djongo import models as MongoModels
+#from djongo.models import fields
+from djongo.models.json import JSONField as MongoDB_JSONField
+
+from django.db import models
+from django.contrib.postgres.fields import JSONField as PostgreSQL_JSONField
+
 
 """
 '_id','user_id','date','is_retweet','is_thread','text','emoji','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term'
-
-
 """
 
 class data(models.Model):
@@ -37,7 +39,8 @@ class Twitter_data(models.Model):
 
 class TwitterJSON(models.Model):
     _id = models.CharField(max_length = 50, primary_key = True)
-    json = models.JSONField()
+    json = PostgreSQL_JSONField()
+    #json = MongoModels.JSONField()
 
     def __str__(self):
         return _id

@@ -182,9 +182,9 @@ class TwitterAPITweepy(cleanTweets,DataBase):
                 
             newTweet.save()
 
-            JSON = TwitterJSON(_id = parsed_tweet['_id'], json = json.loads(json.dumps(tweet._json)))
+            JSON = TwitterJSON(_id = parsed_tweet['_id'], json = json.dumps(tweet._json))
 
-            JSON.save(using='MongoDB')
+            JSON.save()#(using='MongoDB')
         return tweets 
   
 def main():
