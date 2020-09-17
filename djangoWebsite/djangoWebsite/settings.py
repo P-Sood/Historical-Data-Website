@@ -33,7 +33,7 @@ DEBUG = True # Allow us to see error much better with white box view
 ALLOWED_HOSTS = []
 
 
-
+import Twitter.FrontEnd_Twitter
 
 # Application definition
 
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Everything below I have added
     #'search.apps.searchConfig',
-    'search',
+    'Twitter.FrontEnd_Twitter',
     'crispy_forms',
     'django_celery_results',
     'celery_progress',
@@ -176,12 +176,4 @@ BROKER_URL = CELERY_BROKER_URL
 result_backend = 'django-db'
 CELERY_RESULT_BACKEND = result_backend
 
-    # Here i add in the things to the database under the name "celery_taskmeta" but it dosent give me as much info
-    # As if i just leave it as "django-db" for some reason
-
-#CELERY_MONGODB_BACKEND_SETTINGS = {
-#    'database': 'Django',
-#    'taskmeta_collection': 'celery_taskmeta',
-#}
-#CELERY_RESULT_BACKEND = CELERY_MONGODB_BACKEND_SETTINGS
 

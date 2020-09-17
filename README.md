@@ -11,3 +11,5 @@ celery -A djangoWebsite worker -l info -P gevent
 
 Celery for Mac:
 celery -A djangoWebsite worker -l info
+
+Weird error where if the celery queue seems to be stuck, just do a quick search of the database for a csv file and it'll somehow fix it. I think its more to do that the computer gets stuck so the change from getting tweets to querying them allows it to get unstuck
