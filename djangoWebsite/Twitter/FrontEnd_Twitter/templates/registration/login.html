@@ -6,11 +6,7 @@
   {% block login %}
     <div class="container" >
       <h1> Log In  </h1>
-      <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <button type="submit">Login</button>
-      </form> 
+      {%  crispy Loginform Loginform.helper  %}
     </div>
 
 

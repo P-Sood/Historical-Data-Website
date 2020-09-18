@@ -46,3 +46,22 @@ class Query(forms.Form):
             ),
             
         )
+class Login(forms.Form):
+    username = forms.CharField(label = 'username' , max_length = 200 , required = True)
+    password = forms.CharField(label = 'password' , max_length = 200 , required = True , widget = forms.PasswordInput())
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout (
+            Fieldset(
+                " ",
+                "username",
+                "password",
+
+            ),
+            ButtonHolder(
+                Submit('submit','Login Data',css_class='button white'),
+            ),
+        )

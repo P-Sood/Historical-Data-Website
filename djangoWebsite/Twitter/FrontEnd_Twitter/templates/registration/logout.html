@@ -1,0 +1,12 @@
+{% extends "registration/base.html" %}
+
+{%  block not_logged %}
+    <div class="content">
+        <h2>
+            Logged out
+        </h2>
+        <p> Go log in first </p> 
+        <a href="/login"> Login again here </a>
+    </div>
+
+{%  endblock not_logged %}
