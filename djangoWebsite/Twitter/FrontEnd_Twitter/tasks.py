@@ -1,5 +1,4 @@
 from Twitter.BackEnd_Twitter.TwitterAPITweepy import TwitterAPITweepy
-from Twitter.BackEnd_Twitter.database import DataBase
 import Twitter.BackEnd_Twitter.backend_config as config
 
 from .models import Twitter_data
@@ -15,15 +14,7 @@ def queryTweet_Tweepy(self, search , fromDate, toDate, count ):
     access_token_secret = config.Twitter['Access_Secret']
     search = [search]
 
-    UserName = config.MongoDB['UserName']
-    Password = config.MongoDB['Password']
-    database = config.MongoDB['Database']
-    collection = config.MongoDB['Collection']
-
-    #progressRecorder = ProgressRecorder(self)
-
-    mongoDB = DataBase(UserName,Password,database,collection)
-    api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret,mongoDB)
+    api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret)
     context = api.tweetsDjango_database(search,ProgressRecorder(self),since=fromDate, until=toDate,count = count)
 
     return context

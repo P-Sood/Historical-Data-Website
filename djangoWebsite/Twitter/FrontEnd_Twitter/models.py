@@ -1,9 +1,10 @@
-from djongo import models as MongoModels
+#from djongo import models as MongoModels
 #from djongo.models import fields
-from djongo.models.json import JSONField as MongoDB_JSONField
+#from djongo.models.json import JSONField as MongoDB_JSONField
+# pip install djongo for these if we every need mongodb again
 
 from django.db import models
-from django.contrib.postgres.fields import JSONField as PostgreSQL_JSONField
+from django.db.models import JSONField
 
 
 """
@@ -39,7 +40,7 @@ class Twitter_data(models.Model):
 
 class TwitterJSON(models.Model):
     _id = models.CharField(max_length = 50, primary_key = True)
-    json = PostgreSQL_JSONField()
+    json = JSONField()
     #json = MongoModels.JSONField()
 
     def __str__(self):

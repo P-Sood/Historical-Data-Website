@@ -7,7 +7,6 @@ import json
 
 from .cleanTweets import cleanTweets
 from .wordFrequency import wordFrequency
-from .database import DataBase
 #from .backend_config import backend_config as config
 
 
@@ -28,14 +27,13 @@ from urllib.parse import urlparse
 # Tweepy uses dot method and Twurl uses indexing 
 
     
-class TwitterAPITweepy(cleanTweets,DataBase):
+class TwitterAPITweepy(cleanTweets):
     
-    def __init__(self,consumer_key,consumer_secret,access_token,access_token_secret,database):
+    def __init__(self,consumer_key,consumer_secret,access_token,access_token_secret):
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
         self.access_token = access_token
         self.access_token_secret = access_token_secret
-        self.database = database
 
 
     def Auth(self):
@@ -45,12 +43,7 @@ class TwitterAPITweepy(cleanTweets,DataBase):
             self.api = tweepy.API(self.auth,wait_on_rate_limit=True)
         except tweepy.error.TweepError:
             print("Something is wrong with one of your keys from Twitter")    
-        try:
-            self.database.connection()
-        except:
-            print("Something is wrong with one of your keys from MongoDB") 
-
-        # if you add terms to the searchParams list, it will use the logical and gate
+        
 
 
     def tweetsDjango_database(self,searchParameters, progressRecorder ,since = "2020-01-01" , until = str(date.today()), count = 2):
@@ -219,15 +212,9 @@ def main():
     access_token_secret = config.Twitter['Access_Secret']
     search = "#Portland"
 
-    UserName = config.MongoDB['UserName']
-    Password = config.MongoDB['Password']
-    database = config.MongoDB['Database']
-    collection = config.MongoDB['Collection']
-
-    mongoDB = DataBase(UserName,Password,database,collection)
 
 
-    api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret,mongoDB)
+    api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret)
     api.get_tweets_tweepy(csvFileName = "tweets_1" + search + ".csv" , searchParameters = [search],count=2)
 
     #wordFreq = wordFrequency()

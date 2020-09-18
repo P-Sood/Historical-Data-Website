@@ -108,11 +108,6 @@ DATABASES = {
         'USER':  config.PostgreSQL['UserName'],
         'PASSWORD': config.PostgreSQL['Password'],
         'PORT': config.PostgreSQL['Port'],
-    },
-    'MongoDB': {
-        'ENGINE': 'djongo',
-        'NAME': config.MongoDB['Name'],
-        'HOST': config.MongoDB['Host'],
     }
 }
 # If I comment out the database routers line then I need to go into tweepy code in backend and take 
@@ -171,7 +166,7 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = 'json'
 
-CELERY_BROKER_URL = "sqla+postgresql://" + config.PostgreSQL['UserName'] + ":" + config.PostgreSQL['Password'] + "@localhost:5432/Django"
+CELERY_BROKER_URL = "sqla+postgresql://" + config.PostgreSQL['UserName'] + ":" + config.PostgreSQL['Password'] + "@localhost:5432/postgres"
 BROKER_URL = CELERY_BROKER_URL
 result_backend = 'django-db'
 CELERY_RESULT_BACKEND = result_backend
