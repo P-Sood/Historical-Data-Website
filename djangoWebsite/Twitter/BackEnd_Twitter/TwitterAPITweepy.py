@@ -10,7 +10,13 @@ from .wordFrequency import wordFrequency
 from .database import DataBase
 #from .backend_config import backend_config as config
 
-from Twitter.FrontEnd_Twitter.models import Twitter_data,data,TwitterJSON
+
+from Twitter.FrontEnd_Twitter.models import TwitterJSON,Twitter_data,data
+import Twitter.FrontEnd_Twitter.models as test
+
+data = test.data
+TwitterJSON = test.TwitterJSON
+Twitter_data = test.Twitter_data
 
 from celery_progress.backend import ProgressRecorder
 
@@ -66,12 +72,12 @@ class TwitterAPITweepy(cleanTweets,DataBase):
         
 
         iteration = 0
-       
         # If you want to add another field to the csv file, follow code below and then put it in fieldnames as well 
         for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
             progressRecorder.set_progress(iteration,lenResults,"on iteration: " + str(iteration))
             iteration += 1
             user =  tweet.user
+
             # Making sure there is no link and then adding keys to my dictionary with specific values to be written to csv            
             parsed_tweet = {
                 '_id':  tweet.id_str,
@@ -171,9 +177,12 @@ class TwitterAPITweepy(cleanTweets,DataBase):
                     except:
                         parsed_tweet['media'] = ""
             
+            
             isDuplicate = data.objects.all().filter(_id__exact = parsed_tweet["_id"])
 
+
             if not isDuplicate:
+
 
                 newData = data( _id = parsed_tweet['_id'] , user_id = parsed_tweet['user_id'] , date = parsed_tweet['date'][0:10] ,
                 
@@ -182,6 +191,8 @@ class TwitterAPITweepy(cleanTweets,DataBase):
                     search_term = parsed_tweet['search_term'] )
 
                 newData.save()
+                
+
 
                 newTweet = Twitter_data( keyData = newData , is_retweet = parsed_tweet['is_retweet'] , is_thread = parsed_tweet['is_thread'] , 
                 

@@ -23,5 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('Twitter/', include('Twitter.FrontEnd_Twitter.urls')),
     path('',include('django.contrib.auth.urls')),
-    path('celery-progress/',include("celery_progress.urls")),    
+    path('celery-progress/',include("celery_progress.urls")),   
+    path('', include('Home.urls')),
+   
 ]

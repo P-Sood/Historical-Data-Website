@@ -1,7 +1,19 @@
 {% extends "registration/base.html" %}
 
-<div class="content">
-    <h2>
-        <a href="/Twitter">Twitter Engine</a>
-    </h2>
+{%  block login  %}
+    <div class="content">
+        <h2>
+            <a href="/Twitter">Twitter</a>
+        </h2>
+    </div>
+
+{%  endblock login %}
+
+{% block not_logged %}
+
+<div class="container" >
+  <p> Go log in first </p> 
+  <a href="/login"> Login here </a>
 </div>
+
+{% endblock not_logged %}
