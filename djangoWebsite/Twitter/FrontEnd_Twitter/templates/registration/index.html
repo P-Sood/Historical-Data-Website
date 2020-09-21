@@ -2,9 +2,18 @@
 
 {%  block home %}
     <div class="content">
-        <h2>
-            <a href="/Twitter">Twitter</a>
-        </h2>
+        <h1>HOME</h1>
+        <h3>
+            <a href="/Twitter/"> Link to Twitter here </a>
+            <!-- {% for message in messages %}
+            <p>
+                <form action="/Twitter/" method="POST" id="CeleryTasks">
+                    {%  csrf_token  %}
+                      <button type="submit" name="numTasks" value="{{ message }}" form="CeleryTasks">Twitter Home Page</button>    
+                  </form>
+            </p>
+            {% endfor %} -->
+        </h3>
     </div>
 
 {%  endblock home %}
@@ -14,6 +23,10 @@
 <div class="container" >
   <p> Go log in first </p> 
   <a href="/login"> Login here </a>
+  <br>
+  <p> Register Here </p> 
+  <a href="/register"> Register here </a>
 </div>
+
 
 {% endblock not_logged %}

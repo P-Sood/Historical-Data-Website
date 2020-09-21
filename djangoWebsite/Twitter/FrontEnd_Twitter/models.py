@@ -6,7 +6,6 @@
 from django.db import models
 from django.db.models import JSONField
 
-
 """
 '_id','user_id','date','is_retweet','is_thread','text','emoji','media','likes','retweets','related_hashtags','external_links','tweet_link','search_term'
 """

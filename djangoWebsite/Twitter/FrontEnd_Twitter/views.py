@@ -33,12 +33,22 @@ def home(request):
 
     homeHTML = 'search/home.html'
 
+    numTasksBeginning = request.POST.get('numTasks',None)
+    numTasksCounter = numTasksBeginning
+    numTasksRange = None
+
     Inputform = Search()
     Searchform = Query()
     task_id = None
+    boolNum = False
+    if numTasksBeginning is not None:
+        boolNum = True
  
     if request.method == 'POST':
         Inputform = Search(request.POST)
+        if boolNum:
+            numTasksBeginning = int(numTasksBeginning)
+            numTasksCounter = int(numTasksCounter)
         if Inputform.is_valid():
             input_ = Inputform.cleaned_data['input_']
             toDate_ = Inputform.cleaned_data['toDate']
@@ -49,6 +59,9 @@ def home(request):
                 #queryTweet_TweepyTEST(input_,fromDate_,toDate_,count_)
                 task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
                 task_id = task.task_id
+                if boolNum:
+                    numTasksCounter += 1
+                    numTasksRange = numTasksCounter-numTasksBeginning
                 
     if request.method == 'GET':
         Searchform = Query(request.GET)
@@ -56,10 +69,16 @@ def home(request):
             search = Searchform.cleaned_data['searchDB'] 
             return downloadCSV(search)
 
+    
+    
     context = {
         'Inputform': Inputform,
         "Searchform" : Searchform,
         "task_id": task_id,
+        "numTasksBeg": numTasksBeginning,
+        "numTasksCount": numTasksCounter,
+        "range": numTasksRange,
+
     }
 
     return render(request,homeHTML,context)
@@ -103,20 +122,19 @@ def downloadCSV(search):
     return response
 
 def results(request):
-    task_id = request.POST.get('taskID',None)
-    print(task_id)
-    print('SPACE BUFFER')
 
+    # Range = request.POST.get('taskID',None)
+    # context = {
+    #     'range': Range,
+    # }
+
+    task_id = request.POST.get('taskID',None)
     task = TaskResult.objects.all().filter(task_id = task_id)
-    print(task)
     task_results = None
     task_args = None
     if task:
         task_results = task[0].result
         task_args = task[0].task_args
-
-    print("NEXT BUFFER")
-    print(task_results)
     context = {
         'task_id': task_id,
         'task_results': task_results,

@@ -50,9 +50,10 @@ class TwitterAPITweepy(cleanTweets):
 
         self.Auth()
         lenSearch = len(searchParameters)
+        lenResults = 0
         print("Before going thru all tweets once")
-        results = tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items()
-        lenResults = sum(1 for _ in results)
+        for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
+            lenResults += 1 
         print("After going thru every super inneficient 2 lines of code")
         context = {
             'numDuplicates' : 0,

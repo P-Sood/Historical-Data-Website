@@ -34,9 +34,16 @@
 
   {% block taskResults %}
   <div class="container">
+
+    <h3>{{numTasksBeg}} have been done</h3>
+    <h3>{{numTasksCount}} have been completed</h3>
+    <h3>{{range}} have been started</h3>
+
+
+
     <form action="/Twitter/results/" method="POST" id="TaskQueue">
       {%  csrf_token  %}
-        <button type="submit" name="taskID" value="{{ task_id }}" form="TaskQueue"></button>    
+        <button type="submit" name="taskID" value="{{ task_id }}" form="TaskQueue">Celery Task Queue</button>    
     </form>
   </div>
   {% endblock taskResults %}

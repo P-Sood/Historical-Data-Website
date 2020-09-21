@@ -47,9 +47,11 @@ INSTALLED_APPS = [
     # Everything below I have added
     #'search.apps.searchConfig',
     'Twitter.FrontEnd_Twitter',
+    'Home',
     'crispy_forms',
     'django_celery_results',
     'celery_progress',
+    'django.contrib.postgres',
     #'djcelery',
     #'kombu.transport.django',
     
