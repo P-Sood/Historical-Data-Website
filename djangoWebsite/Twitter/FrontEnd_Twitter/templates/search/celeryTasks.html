@@ -17,17 +17,16 @@
 
   {% block taskResults %}
   
-  <p> <a href="http://localhost:8000/admin/django_celery_results/taskresult/46/change/"> {{task_args}}  </a>  </p>
+  {% for taskNumber in celeryTasksArray %}
+    <div>
+      <a href="http://localhost:8000/admin/django_celery_results/taskresult/{{taskNumber}}/change/">Task Number {{taskNumber}}</a>
+      <br>
+    </div>
 
-  <p>Weird error where if the celery queue seems to be stuck, 
-    just do a quick search of the database for a csv file and it'll somehow fix it. 
-    I think its more to do that the computer gets stuck so the change from getting tweets to querying them allows it to get unstuck
-  </p>
+  {% endfor %}
 
   <div class="content">
-    <h4> Number of duplicated tweets from search query: {{ range }} </h4>
-    <h4> Retrieved {{  range  }} tweets </h4>
-
+    <h4> These are task_results {{ task_results }} </h4>
   </div>
 
   <div class='progress-wrapper'>

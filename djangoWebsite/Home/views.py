@@ -8,6 +8,7 @@ from djangoWebsite import settings
 from django.contrib.messages import error
 from django.contrib.auth.models import User
 from .models import UserExtensionModel
+from django.contrib.auth.hashers import make_password
 # Create your views here.
 
 def home_page(request):
@@ -61,7 +62,7 @@ def registration_page(request):
             last_name = registrationForm.cleaned_data['last_name']
             User.objects.create(
                     username = username,
-                    password = password,
+                    password = make_password(password),
                     is_superuser = False,
                     first_name = first_name,
                     last_name = last_name,

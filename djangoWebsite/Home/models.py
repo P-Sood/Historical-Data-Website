@@ -7,7 +7,9 @@ from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 
+
 class UserExtensionModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)
     numCeleryTasks_Recorded = models.PositiveIntegerField()
     arrayTasksCompleted = ArrayField(base_field = models.IntegerField())
+        

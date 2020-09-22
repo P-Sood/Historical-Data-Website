@@ -2,6 +2,8 @@ from .models import Twitter_data,data
 from .tasks import queryTweet_Tweepy
 from django.shortcuts import render
 from django.template import RequestContext
+from Home.models import UserExtensionModel
+import numpy
 
 from .runTweepy import queryTweet_TweepyTEST
 
@@ -33,55 +35,66 @@ def home(request):
 
     homeHTML = 'search/home.html'
 
-    numTasksBeginning = request.POST.get('numTasks',None)
-    numTasksCounter = numTasksBeginning
-    numTasksRange = None
+    currentUser = request.user
+    currentUserModelExt = UserExtensionModel.objects.get(user = currentUser)
 
     Inputform = Search()
     Searchform = Query()
     task_id = None
-    boolNum = False
-    if numTasksBeginning is not None:
-        boolNum = True
- 
+
     if request.method == 'POST':
         Inputform = Search(request.POST)
-        if boolNum:
-            numTasksBeginning = int(numTasksBeginning)
-            numTasksCounter = int(numTasksCounter)
         if Inputform.is_valid():
             input_ = Inputform.cleaned_data['input_']
             toDate_ = Inputform.cleaned_data['toDate']
             fromDate_ = Inputform.cleaned_data['fromDate']
             count_ = Inputform.cleaned_data['count']
             if( is_date(toDate_) and is_date(fromDate_) ):
-                # Need to do another check to see if info is already in the database
-                #queryTweet_TweepyTEST(input_,fromDate_,toDate_,count_)
                 task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
                 task_id = task.task_id
-                if boolNum:
-                    numTasksCounter += 1
-                    numTasksRange = numTasksCounter-numTasksBeginning
-                
+                                
     if request.method == 'GET':
         Searchform = Query(request.GET)
         if Searchform.is_valid():
-            search = Searchform.cleaned_data['searchDB'] 
-            return downloadCSV(search)
+            search = Searchform.cleaned_data['searchDB']        
+            return downloadCSV(search)    
 
-    
-    
     context = {
         'Inputform': Inputform,
         "Searchform" : Searchform,
         "task_id": task_id,
-        "numTasksBeg": numTasksBeginning,
-        "numTasksCount": numTasksCounter,
-        "range": numTasksRange,
-
+        
     }
 
     return render(request,homeHTML,context)
+
+def results(request):
+
+    # Range = request.POST.get('taskID',None)
+    # context = {
+    #     'range': Range,
+    # }
+    currentUser = request.user
+    currentUserModelExt = UserExtensionModel.objects.get(user = currentUser)
+    task_id = request.POST.get('taskID',None)
+    task = TaskResult.objects.all().filter(task_id = task_id)
+    task_results = None
+    task_args = None
+    if task:
+        task_results = task[0].result
+        task_args = task[0].task_args
+        print(task[0].status)
+        if task[0].status == "PROGRESS" or task[0].status == "SUCCESS":
+            UserExtensionModel.objects.filter(user = currentUser).update(arrayTasksCompleted = currentUserModelExt.arrayTasksCompleted + [TaskResult.objects.all().count()])
+
+    context = {
+        'task_id': task_id,
+        'task_results': task_results,
+        'task_args': task_args,
+        "celeryTasksArray":  numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),
+    }
+
+    return render(request, 'search/celeryTasks.html',context)
 
 def downloadCSV(search):
     
@@ -120,25 +133,3 @@ def downloadCSV(search):
     response['Content-Disposition'] = "attachment; filename= \"" + search + ".csv\""
 
     return response
-
-def results(request):
-
-    # Range = request.POST.get('taskID',None)
-    # context = {
-    #     'range': Range,
-    # }
-
-    task_id = request.POST.get('taskID',None)
-    task = TaskResult.objects.all().filter(task_id = task_id)
-    task_results = None
-    task_args = None
-    if task:
-        task_results = task[0].result
-        task_args = task[0].task_args
-    context = {
-        'task_id': task_id,
-        'task_results': task_results,
-        'task_args': task_args,
-    }
-
-    return render(request, 'search/celeryTasks.html',context)
