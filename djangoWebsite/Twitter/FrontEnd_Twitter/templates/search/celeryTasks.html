@@ -17,12 +17,11 @@
 
   {% block taskResults %}
   
-  {% for taskNumber in celeryTasksArray %}
+  {% for taskNumber,taskArgs in tasksData %}
     <div>
-      <a href="http://localhost:8000/admin/django_celery_results/taskresult/{{taskNumber}}/change/">Task Number {{taskNumber}}</a>
+      <a href="http://localhost:8000/admin/django_celery_results/taskresult/{{taskNumber}}/change/">Click here for updates {{taskArgs}}</a>
       <br>
     </div>
-
   {% endfor %}
 
   <div class="content">

@@ -35,9 +35,6 @@ def home(request):
 
     homeHTML = 'search/home.html'
 
-    currentUser = request.user
-    currentUserModelExt = UserExtensionModel.objects.get(user = currentUser)
-
     Inputform = Search()
     Searchform = Query()
     task_id = None
@@ -70,28 +67,21 @@ def home(request):
 
 def results(request):
 
-    # Range = request.POST.get('taskID',None)
-    # context = {
-    #     'range': Range,
-    # }
     currentUser = request.user
     currentUserModelExt = UserExtensionModel.objects.get(user = currentUser)
     task_id = request.POST.get('taskID',None)
     task = TaskResult.objects.all().filter(task_id = task_id)
-    task_results = None
-    task_args = None
     if task:
-        task_results = task[0].result
-        task_args = task[0].task_args
-        print(task[0].status)
         if task[0].status == "PROGRESS" or task[0].status == "SUCCESS":
             UserExtensionModel.objects.filter(user = currentUser).update(arrayTasksCompleted = currentUserModelExt.arrayTasksCompleted + [TaskResult.objects.all().count()])
+            UserExtensionModel.objects.filter(user = currentUser).update(arrayTasksArgs = currentUserModelExt.arrayTasksArgs + [task[0].task_args])
 
     context = {
         'task_id': task_id,
         'task_results': task_results,
-        'task_args': task_args,
-        "celeryTasksArray":  numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),
+        'tasksData' : zip(numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),UserExtensionModel.objects.get(user = currentUser).arrayTasksArgs),
+        #'task_args': task_args,
+        #"celeryTasksArray":  numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),
     }
 
     return render(request, 'search/celeryTasks.html',context)

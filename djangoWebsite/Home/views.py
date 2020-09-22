@@ -6,9 +6,10 @@ from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import redirect,HttpResponseRedirect
 from djangoWebsite import settings
 from django.contrib.messages import error
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Permission
 from .models import UserExtensionModel
 from django.contrib.auth.hashers import make_password
+
 # Create your views here.
 
 def home_page(request):
@@ -60,19 +61,24 @@ def registration_page(request):
             password = registrationForm.cleaned_data['password']
             first_name = registrationForm.cleaned_data['first_name']
             last_name = registrationForm.cleaned_data['last_name']
+            permission = Permission.objects.get(name='Can view task result')
             User.objects.create(
                     username = username,
                     password = make_password(password),
                     is_superuser = False,
                     first_name = first_name,
                     last_name = last_name,
+                    is_staff = True,
             ).save()
             user = authenticate(username = username, password = password)
             userModel = User.objects.get(username = username)
+            userModel.user_permissions.add(permission)
+            userModel.save()
             UserExtensionModel(
                 user = userModel,
                 numCeleryTasks_Recorded = TaskResult.objects.all().count(),
                 arrayTasksCompleted = [],
+                arrayTasksArgs = [],
             ).save()
             login(request,userModel)
             error(request,TaskResult.objects.all().count())
