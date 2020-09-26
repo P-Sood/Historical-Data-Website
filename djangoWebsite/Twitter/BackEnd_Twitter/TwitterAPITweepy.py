@@ -54,6 +54,7 @@ class TwitterAPITweepy(cleanTweets):
             'numTweets' :  0,
             'ifSuccess': "Success"
         }
+        
         query = []
         for i in range(lenSearch):
             query.append(searchParameters[i].lower())
