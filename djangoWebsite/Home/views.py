@@ -36,8 +36,6 @@ def login_page(request):
                 else:
                 #ActualUser.user_permissions.set('django_celery_results.view_task_results')
                     UserModel = UserExtensionModel.objects.get(user = user)
-                    UserModel.numCeleryTasks_Recorded = TaskResult.objects.all().count()
-                    UserModel.save(update_fields = ['numCeleryTasks_Recorded'])
                     return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
     context = {
         'Loginform': LoginForm,
@@ -61,6 +59,7 @@ def registration_page(request):
             password = registrationForm.cleaned_data['password']
             first_name = registrationForm.cleaned_data['first_name']
             last_name = registrationForm.cleaned_data['last_name']
+
             permission = Permission.objects.get(name='Can view task result')
             User.objects.create(
                     username = username,
@@ -76,12 +75,9 @@ def registration_page(request):
             userModel.save()
             UserExtensionModel(
                 user = userModel,
-                numCeleryTasks_Recorded = TaskResult.objects.all().count(),
                 arrayTasksCompleted = [],
-                arrayTasksArgs = [],
             ).save()
             login(request,userModel)
-            error(request,TaskResult.objects.all().count())
             return redirect('/')
     context = {
         'registerForm': registrationForm,

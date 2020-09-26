@@ -12,10 +12,14 @@ def queryTweet_Tweepy(self, search , fromDate, toDate, count ):
     consumer_secret = config.Twitter['Consumer_Secret']
     access_token = config.Twitter['Access_Token']
     access_token_secret = config.Twitter['Access_Secret']
-    search = [search]
+    
 
     api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret)
+
+    search = [search]
     context = api.tweetsDjango_database(search,ProgressRecorder(self),since=fromDate, until=toDate,count = count)
+    
+    #context = api.HIST(searchParameters = search,progressRecorder = ProgressRecorder(self), since = fromDate , until = toDate , count = count)
 
     return context
     

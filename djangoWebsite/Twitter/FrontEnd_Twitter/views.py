@@ -67,19 +67,26 @@ def home(request):
 
 def results(request):
 
+    arrayTaskArgs =[]
     currentUser = request.user
-    currentUserModelExt = UserExtensionModel.objects.get(user = currentUser)
+    currentUserModelExt = UserExtensionModel.objects.filter(user = currentUser)
+    currentUserModelExt_arrayTasksCompleted = numpy.unique(numpy.array(currentUserModelExt[0].arrayTasksCompleted))
     task_id = request.POST.get('taskID',None)
     task = TaskResult.objects.all().filter(task_id = task_id)
+    numTasks = TaskResult.objects.all().count()
+
     if task:
         if task[0].status == "PROGRESS" or task[0].status == "SUCCESS":
-            UserExtensionModel.objects.filter(user = currentUser).update(arrayTasksCompleted = currentUserModelExt.arrayTasksCompleted + [TaskResult.objects.all().count()])
-            UserExtensionModel.objects.filter(user = currentUser).update(arrayTasksArgs = currentUserModelExt.arrayTasksArgs + [task[0].task_args])
+            if numTasks not in currentUserModelExt_arrayTasksCompleted:
+                currentUserModelExt.update(arrayTasksCompleted = currentUserModelExt[0].arrayTasksCompleted + [numTasks])
+    
+    for taskNumber in currentUserModelExt_arrayTasksCompleted:
+        arrayTaskArgs.append(TaskResult.objects.get(id = taskNumber).task_args)
+
 
     context = {
         'task_id': task_id,
-        'task_results': task_results,
-        'tasksData' : zip(numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),UserExtensionModel.objects.get(user = currentUser).arrayTasksArgs),
+        'tasksData' : zip(currentUserModelExt_arrayTasksCompleted,arrayTaskArgs),
         #'task_args': task_args,
         #"celeryTasksArray":  numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),
     }
