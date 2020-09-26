@@ -17,7 +17,6 @@ data = test.data
 TwitterJSON = test.TwitterJSON
 Twitter_data = test.Twitter_data
 
-from celery_progress.backend import ProgressRecorder
 
 
 from urllib.parse import urlparse
@@ -46,33 +45,22 @@ class TwitterAPITweepy(cleanTweets):
         
 
 
-    def tweetsDjango_database(self,searchParameters, progressRecorder ,since = "2020-01-01" , until = str(date.today()), count = 2):
+    def tweetsDjango_database(self,searchParameters ,since = "2020-01-01" , until = str(date.today()), count = 2):
 
         self.Auth()
         lenSearch = len(searchParameters)
-        lenResults = 0
-        print("Before going thru all tweets once")
-        for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
-            lenResults += 1 
-        print("After going thru every super inneficient 2 lines of code")
         context = {
             'numDuplicates' : 0,
-            'numTweets' :  lenResults,
+            'numTweets' :  0,
             'ifSuccess': "Success"
         }
         query = []
         for i in range(lenSearch):
             query.append(searchParameters[i].lower())
         
-
-        iteration = 0
-        # If you want to add another field to the csv file, follow code below and then put it in fieldnames as well 
         for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
-            progressRecorder.set_progress(iteration,lenResults,"on iteration: " + str(iteration))
-            iteration += 1
             user =  tweet.user
-
-            # Making sure there is no link and then adding keys to my dictionary with specific values to be written to csv            
+            context['numTweets'] += 1
             parsed_tweet = {
                 '_id':  tweet.id_str,
                 'user_id':  user.screen_name,
@@ -85,7 +73,7 @@ class TwitterAPITweepy(cleanTweets):
                 'search_term': searchParameters,
                 }
 
-            if hasattr(tweet, "retweeted_status"):  # Check if Retweet
+            if hasattr(tweet, "retweeted_status"): 
                 try:
                     parsed_tweet['text'] = super().clean_tweet(super().remove_emoji(tweet.retweeted_status.extended_tweet["full_text"])).strip()
                 except:
@@ -201,9 +189,7 @@ class TwitterAPITweepy(cleanTweets):
                 JSON.save()
             else:
                 context['numDuplicates'] += 1
-                
-            
-                
+         
         return context
   
 def main():

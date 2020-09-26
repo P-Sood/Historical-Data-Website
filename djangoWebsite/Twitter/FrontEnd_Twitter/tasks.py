@@ -13,13 +13,11 @@ def queryTweet_Tweepy(self, search , fromDate, toDate, count ):
     access_token = config.Twitter['Access_Token']
     access_token_secret = config.Twitter['Access_Secret']
     
-
     api = TwitterAPITweepy(consumer_key,consumer_secret,access_token,access_token_secret)
-
     search = [search]
-    context = api.tweetsDjango_database(search,ProgressRecorder(self),since=fromDate, until=toDate,count = count)
+    context = api.tweetsDjango_database(search,since=fromDate, until=toDate,count = count)
     
-    #context = api.HIST(searchParameters = search,progressRecorder = ProgressRecorder(self), since = fromDate , until = toDate , count = count)
+    #context = api.HIST(searchParameters = search, since = fromDate , until = toDate , count = count)
 
     return context
     

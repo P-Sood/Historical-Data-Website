@@ -83,6 +83,8 @@ def results(request):
     for taskNumber in currentUserModelExt_arrayTasksCompleted:
         arrayTaskArgs.append(TaskResult.objects.get(id = taskNumber).task_args)
 
+    print(arrayTaskArgs)
+
 
     context = {
         'task_id': task_id,
