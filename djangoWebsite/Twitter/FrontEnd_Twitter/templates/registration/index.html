@@ -5,16 +5,15 @@
         <h1>HOME</h1>
         <h3>
             <a href="/Twitter/"> Link to Twitter here </a>
-            <!-- {% for message in messages %}
-            <p>
-                <form action="/Twitter/" method="POST" id="CeleryTasks">
-                    {%  csrf_token  %}
-                      <button type="submit" name="numTasks" value="{{ message }}" form="CeleryTasks">Twitter Home Page</button>    
-                  </form>
-            </p>
-            {% endfor %} -->
         </h3>
+        <form>
+            <button>
+                <a href="/logout/">Logout</a>
+            </button>
+        </form>
     </div>
+
+
 
 {%  endblock home %}
 

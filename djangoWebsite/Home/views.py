@@ -21,7 +21,6 @@ def login_page(request):
 
     LoginForm = loginForm()
 
-
     if request.method == 'POST':
         LoginForm = loginForm(request.POST)
         if LoginForm.is_valid():

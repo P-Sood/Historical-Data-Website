@@ -4,6 +4,13 @@
 
 {%  load crispy_forms_tags  %}
 
+  {% block title %}
+    <form>
+      <button>
+          <a href="/logout/">Logout</a>
+      </button>
+    </form>
+  {% endblock title %}
 
   {% block query %}
   <div class="container"  >
