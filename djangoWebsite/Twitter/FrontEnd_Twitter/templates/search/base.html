@@ -4,16 +4,72 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    
-    {% block title %}      {% endblock title %}
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
 
+    {% block title %}      {% endblock title %}
   </head>
   <body>
 
     {%  if user.is_authenticated  %}
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+          <div class="navbar-header">
+              <ul class="nav navbar-nav navbar-left">
+                  <li><a href="/"> <h1>Home</h1> </a></li>
+              </ul>
+          </div>
+          <ul class="nav navbar-nav">
+              <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" href="#"> 
+                      <h3>Twitter</h3> 
+                      <span class="caret">
+                      </span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a href="/Twitter/addDB"> 
+                          <h4>Add to Database</h4>  
+                      </a>
+                    </li>
+                    <li>
+                        <a href="/Twitter/queryDB/"> <h4>Query Database</h4> 
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Twitter/results/"> <h4>View Task Results</h4> 
+                        </a>
+                    </li>
+                  </ul>
+              </li>
+
+              <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" href="#">
+                     <h3>New Page</h3>  
+                      <span class="caret">
+                      </span>
+                  </a>
+                  <ul class="dropdown-menu">
+                      <li><a href="#"> <h4>Page 2</h4></a></li>
+                  </ul>
+              </li>
+              
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+             <li>
+                  <a href="/logout/">
+                      <span class="glyphicon glyphicon-log-out">
+                      </span> 
+                      Logout
+                  </a>
+              </li>
+          </ul>
+      </div>
+    </nav>
       {% block query %}      {% endblock query %}
       {% block input %}      {% endblock input %}
       {% block taskResults %}      {% endblock taskResults %} 

@@ -26,16 +26,18 @@ def login_page(request):
         if LoginForm.is_valid():
             username = LoginForm.cleaned_data['username']
             password = LoginForm.cleaned_data['password']
-            user = User.objects.get(username = username)
+            user = User.objects.filter(username = username)
             authenticate(username = username,password = password)
-            if user is not None:
-                login(request,user)
-                if user.is_superuser:
+            try:
+                login(request,user[0])
+                if user[0].is_superuser:
                     return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
                 else:
-                #ActualUser.user_permissions.set('django_celery_results.view_task_results')
-                    UserModel = UserExtensionModel.objects.get(user = user)
+                    UserModel = UserExtensionModel.objects.get(user = user[0])
                     return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
+            except IndexError:
+                error(request,"User or Password not correct")
+                return redirect('/login/')
     context = {
         'Loginform': LoginForm,
     }

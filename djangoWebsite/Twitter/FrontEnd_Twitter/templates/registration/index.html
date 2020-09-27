@@ -1,31 +1,76 @@
 {% extends "registration/base.html" %}
 
-{%  block home %}
-    <div class="content">
-        <h1>HOME</h1>
-        <h3>
-            <a href="/Twitter/"> Link to Twitter here </a>
-        </h3>
-        <form>
-            <button>
-                <a href="/logout/">Logout</a>
-            </button>
-        </form>
-    </div>
+{% block navbar %}          
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <ul class="nav navbar-nav navbar-left">
+                    <li><a href="#"> <h1>Home</h1> </a></li>
+                </ul>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> 
+                        <h3>Twitter</h3> 
+                        <span class="caret">
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="/Twitter/addDB"> 
+                                <h4>Add to Database</h4>  
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Twitter/queryDB/"> <h4>Query Database</h4> 
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Twitter/results/"> <h4>View Task Results</h4> 
+                            </a>
+                        </li>
+                    </ul>
+                </li>
 
-
-
-{%  endblock home %}
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <h3>New Page</h3>  
+                        <span class="caret">
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"> <h4>Page 2</h4></a></li>
+                    </ul>
+                </li>
+                
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+               <li>
+                    <a href="/logout/">
+                        <span class="glyphicon glyphicon-log-out">
+                        </span> 
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+{% endblock navbar %}
 
 {% block not_logged %}
 
-<div class="container" >
-  <p> Go log in first </p> 
-  <a href="/login"> Login here </a>
-  <br>
-  <p> Register Here </p> 
-  <a href="/register"> Register here </a>
-</div>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="#"> <h1>Home</h1> </a></li>
+              </ul>
+        </div>
+        <ul class="nav navbar-right">
+            <li><a href="/register/"><span class="glyphicon glyphicon-user"></span> Sign Up </a></li>
+            <li><a href="/login/"><span class="glyphicon glyphicon-log-in"></span> Login </a></li>
+        </ul>
+    </div>
+</nav>
 
 
 {% endblock not_logged %}

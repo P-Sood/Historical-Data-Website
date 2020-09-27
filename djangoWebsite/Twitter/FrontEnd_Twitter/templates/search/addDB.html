@@ -4,32 +4,16 @@
 
 {%  load crispy_forms_tags  %}
 
-  {% block title %}
-    <form>
-      <button>
-          <a href="/logout/">Logout</a>
-      </button>
-    </form>
-  {% endblock title %}
-
-  {% block query %}
-  <div class="container"  >
-    <h1> 
-      Search Database  
-    </h1>
-    {%  crispy Searchform Searchform.helper  %}
-  </div>
-  {% endblock query %}
-
-
   {% block input %}
-    <div class="container" >
-      <h1> Add to Database  </h1>
+  <div class="container">
+    <div class="text-left float-left pull-left">
+      <h1> 
+        Add to Database
+      </h1>
       {%  crispy Inputform Inputform.helper  %}
     </div>
-
+  </div>
   {% endblock input %}
-
 
   {% block not_logged %}
     <div class="container" >

@@ -31,12 +31,29 @@ def is_date(string, fuzzy=False):
         return False
 
 
-def home(request):
+def queryDB(request):
 
-    homeHTML = 'search/home.html'
+    homeHTML = 'search/queryDB.html'
+
+    Searchform = Query()
+
+    if request.method == 'GET':
+        Searchform = Query(request.GET)
+        if Searchform.is_valid():
+            search = Searchform.cleaned_data['searchDB']        
+            return downloadCSV(search)   
+
+    context = {
+        "Searchform" : Searchform,        
+    }
+
+    return render(request,homeHTML,context)
+
+def addDB(request):
+
+    homeHTML = 'search/addDB.html'
 
     Inputform = Search()
-    Searchform = Query()
     task_id = None
 
     if request.method == 'POST':
@@ -50,17 +67,10 @@ def home(request):
                 task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
                 task_id = task.task_id
                                 
-    if request.method == 'GET':
-        Searchform = Query(request.GET)
-        if Searchform.is_valid():
-            search = Searchform.cleaned_data['searchDB']        
-            return downloadCSV(search)    
-
+    
     context = {
         'Inputform': Inputform,
-        "Searchform" : Searchform,
         "task_id": task_id,
-        
     }
 
     return render(request,homeHTML,context)
@@ -83,12 +93,9 @@ def results(request):
     for taskNumber in currentUserModelExt_arrayTasksCompleted:
         arrayTaskArgs.append(TaskResult.objects.get(id = taskNumber).task_args)
 
-    print(arrayTaskArgs)
-
-
     context = {
         'task_id': task_id,
-        'tasksData' : zip(currentUserModelExt_arrayTasksCompleted,arrayTaskArgs),
+        'tasksData' : zip(currentUserModelExt_arrayTasksCompleted,arrayTaskArgs ),
         #'task_args': task_args,
         #"celeryTasksArray":  numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),
     }

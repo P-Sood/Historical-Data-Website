@@ -1,15 +1,18 @@
 {% extends "registration/base.html" %}
 
 {%  block not_logged %}
-    <div class="content">
-        <h2>
-            Logged out
-        </h2>
-        <p> Go log in first </p> 
-        <a href="/login"> Login again here </a>
-        <br>
-        <p> Register Here </p> 
-        <a href="/register"> Register here </a>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="#"><span></span> <h1>Logout</h1> </a></li>
+            </ul>
+        </div>
+        <ul class="nav navbar-right navbar-nav">
+                <li><a href="/register/"><span class="glyphicon glyphicon-user"></span> Sign Up </a></li>
+                <li><a href="/login/"><span class="glyphicon glyphicon-log-in"></span> Login </a></li>
+            </div>
+        </ul>
     </div>
-
+</nav>
 {%  endblock not_logged %}

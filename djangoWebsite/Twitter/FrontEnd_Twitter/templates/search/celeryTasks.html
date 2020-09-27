@@ -9,18 +9,31 @@
     </title>
   {% endblock title %}
 
-  {% block header %}
-    <h1> 
-      Status Page
-    </h1>
-  {% endblock header %}
-
   {% block taskResults %}
-    {% for taskNumber,taskArgs in tasksData %}
-      <div>
-        <a href="http://localhost:8000/admin/django_celery_results/taskresult/{{taskNumber}}/change/">Click here for updates {{taskArgs}}</a>
-        <br>
-      </div>
-    {% endfor %}
+    <div class="container">
+      <h2>Task Results Table</h2>
+          <div class="list-group">
+            <div class="d-flex w-100 justify-content-between">
+              <table class="table table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Arguments</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for taskNumber,taskArgs in tasksData %}
+                    <tr>
+                      <th scope="row">{{forloop.counter}}</th>
+                      <td>
+                        <a href="http://localhost:8000/admin/django_celery_results/taskresult/{{taskNumber}}/change/" class="list-group-item">Click here for updates {{taskArgs}}</a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </div>
+          </div>
+        
+    </div>
   {% endblock taskResults %}
 

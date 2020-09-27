@@ -62,7 +62,7 @@ class Login(forms.Form):
 
             ),
             ButtonHolder(
-                Submit('submit','Login Data',css_class='button white'),
+                Submit('submit','Login Data',css_class='button white', id = 'login'),
 
             ),
         )
