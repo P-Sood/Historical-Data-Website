@@ -2,9 +2,6 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
 
-
-    
-
 class Search(forms.Form):
     input_ = forms.CharField(label = 'Input',max_length=100, required=True)
     fromDate = forms.CharField(label = 'fromDate',max_length=10, required=True, widget=forms.TextInput(attrs={'placeholder': 'YYYY-MM-DD'}))
@@ -22,6 +19,7 @@ class Search(forms.Form):
                 'fromDate',
                 'toDate',
                 'count',
+                " ",
             ),
             ButtonHolder(
                 Submit('Submit', 'Submit Data', css_class='button white')
@@ -40,6 +38,7 @@ class Query(forms.Form):
             Fieldset(
                 " ",
                 "searchDB",
+                " ",
             ),
             ButtonHolder(
                 Submit('submit','Query Data',css_class='button white'),
@@ -59,12 +58,13 @@ class Login(forms.Form):
                 " ",
                 "username",
                 "password",
-
+                " ",
             ),
             ButtonHolder(
-                Submit('submit','Login Data',css_class='button white', id = 'login'),
+                Submit('submit','Login Data',css_class='button white'),
 
             ),
+
         )
 class Register(forms.Form):
     username = forms.CharField(label = 'username' , max_length = 200 , required = True)
@@ -83,6 +83,7 @@ class Register(forms.Form):
                 "last_name",
                 "username",
                 "password",
+                " ",
 
             ),
             ButtonHolder(

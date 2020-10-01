@@ -25,5 +25,6 @@ urlpatterns = [
     #path('',include('django.contrib.auth.urls')),
     path('celery-progress/',include("celery_progress.urls")),   
     path('', include('Home.urls')),
+    path('Scraper/',include('Scraper.urls')),
    
 ]

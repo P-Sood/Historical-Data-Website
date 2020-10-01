@@ -64,6 +64,7 @@ def addDB(request):
             fromDate_ = Inputform.cleaned_data['fromDate']
             count_ = Inputform.cleaned_data['count']
             if( is_date(toDate_) and is_date(fromDate_) ):
+                # TODO: Check if the arguments are already in the database HERE
                 task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
                 task_id = task.task_id
                                 
@@ -81,6 +82,7 @@ def results(request):
     currentUser = request.user
     currentUserModelExt = UserExtensionModel.objects.filter(user = currentUser)
     currentUserModelExt_arrayTasksCompleted = numpy.unique(numpy.array(currentUserModelExt[0].arrayTasksCompleted))
+
     task_id = request.POST.get('taskID',None)
     task = TaskResult.objects.all().filter(task_id = task_id)
     numTasks = TaskResult.objects.all().count()

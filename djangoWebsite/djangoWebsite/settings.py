@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     #'search.apps.searchConfig',
     'Twitter.FrontEnd_Twitter',
     'Home',
+    'Scraper',
     'crispy_forms',
     'django_celery_results',
     'celery_progress',
