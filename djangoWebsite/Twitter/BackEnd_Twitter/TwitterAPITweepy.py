@@ -4,9 +4,10 @@ import csv
 import os
 from datetime import date
 import json
+from celery_progress.backend import ProgressRecorder
+
 
 from .cleanTweets import cleanTweets
-from .wordFrequency import wordFrequency
 #from .backend_config import backend_config as config
 
 
@@ -45,7 +46,8 @@ class TwitterAPITweepy(cleanTweets):
         
 
 
-    def tweetsDjango_database(self,searchParameters ,since = "2020-01-01" , until = str(date.today()), count = 2):
+
+    def tweetsDjango_database(self,searchParameters , progressRecorder ,since = "2020-01-01" , until = str(date.today()), count = 2):
 
         self.Auth()
         lenSearch = len(searchParameters)
@@ -58,8 +60,12 @@ class TwitterAPITweepy(cleanTweets):
         query = []
         for i in range(lenSearch):
             query.append(searchParameters[i].lower())
-        
+
+
+        iteration = 0
         for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
+            progressRecorder.set_progress(iteration,iteration + 1,"on iteration: " + str(iteration))
+            iteration += 1
             user =  tweet.user
             context['numTweets'] += 1
             parsed_tweet = {

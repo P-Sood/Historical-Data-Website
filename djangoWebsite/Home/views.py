@@ -26,8 +26,8 @@ def login_page(request):
         if LoginForm.is_valid():
             username = LoginForm.cleaned_data['username']
             password = LoginForm.cleaned_data['password']
-            user = User.objects.filter(username = username)
             authenticate(username = username,password = password)
+            user = User.objects.filter(username = username)
             try:
                 login(request,user[0])
                 if user[0].is_superuser:

@@ -1,9 +1,11 @@
 from .models import Twitter_data,data
 from .tasks import queryTweet_Tweepy
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.template import RequestContext
+from django.contrib.messages import error
+
 from Home.models import UserExtensionModel
-import numpy
+
 
 from .runTweepy import queryTweet_TweepyTEST
 
@@ -55,6 +57,10 @@ def addDB(request):
 
     Inputform = Search()
     task_id = None
+    inDatabase = False
+
+    currentUser = request.user
+    currentUserModelExt = UserExtensionModel.objects.filter(user = currentUser)
 
     if request.method == 'POST':
         Inputform = Search(request.POST)
@@ -64,11 +70,23 @@ def addDB(request):
             fromDate_ = Inputform.cleaned_data['fromDate']
             count_ = Inputform.cleaned_data['count']
             if( is_date(toDate_) and is_date(fromDate_) ):
-                # TODO: Check if the arguments are already in the database HERE
-                task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
-                task_id = task.task_id
-                                
-    
+                taskArgsString = "('" + input_ + "', '" + fromDate_ + "', '" + toDate_ +  "', " + str(count_) + ")"
+
+                for task in TaskResult.objects.all():
+                    if taskArgsString == task.task_args:
+                        inDatabase = True
+                        print("Already there buddy")
+                        error(request,"Your exact arguements are already in the database")
+                        return redirect('/Twitter/addDB/')
+
+                if not inDatabase:
+                    print("Good to go")
+                    task = queryTweet_Tweepy.delay(input_,fromDate_,toDate_,count_)
+                    task_id = task.task_id
+                    numTasks = TaskResult.objects.all().count() + 1
+                    currentUserModelExt.update(arrayTasksCompleted = currentUserModelExt[0].arrayTasksCompleted + [numTasks])
+                    return redirect("/Twitter/addDB/")
+                
     context = {
         'Inputform': Inputform,
         "task_id": task_id,
@@ -81,26 +99,25 @@ def results(request):
     arrayTaskArgs =[]
     currentUser = request.user
     currentUserModelExt = UserExtensionModel.objects.filter(user = currentUser)
-    currentUserModelExt_arrayTasksCompleted = numpy.unique(numpy.array(currentUserModelExt[0].arrayTasksCompleted))
+    currentUserModelExt_arrayTasksCompleted = currentUserModelExt[0].arrayTasksCompleted
 
-    task_id = request.POST.get('taskID',None)
-    task = TaskResult.objects.all().filter(task_id = task_id)
-    numTasks = TaskResult.objects.all().count()
+    try:
+        task_id = TaskResult.objects.filter(id = currentUserModelExt_arrayTasksCompleted[-1])[0].task_id
+        print("Did this try/except")
+    except IndexError:
+        task_id = None
 
-    if task:
-        if task[0].status == "PROGRESS" or task[0].status == "SUCCESS":
-            if numTasks not in currentUserModelExt_arrayTasksCompleted:
-                currentUserModelExt.update(arrayTasksCompleted = currentUserModelExt[0].arrayTasksCompleted + [numTasks])
-    
+
     for taskNumber in currentUserModelExt_arrayTasksCompleted:
-        arrayTaskArgs.append(TaskResult.objects.get(id = taskNumber).task_args)
+        try:
+            arrayTaskArgs.append(TaskResult.objects.filter(id = taskNumber)[0].task_args)
+        except IndexError:
+            return redirect('/Twitter/results/')
 
     context = {
         'task_id': task_id,
         'tasksData' : zip(currentUserModelExt_arrayTasksCompleted,arrayTaskArgs ),
-        #'task_args': task_args,
-        #"celeryTasksArray":  numpy.unique(numpy.array(UserExtensionModel.objects.get(user = currentUser).arrayTasksCompleted)),
-    }
+       }
 
     return render(request, 'search/celeryTasks.html',context)
 

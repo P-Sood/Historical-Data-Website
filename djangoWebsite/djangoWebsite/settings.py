@@ -22,7 +22,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
                                                                                                                                                                                                                                                                                                                                                                                                                                       
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.Django['Key']
+
+
+#SECRET_KEY = config.Django['Key']
+SECRET_KEY = "_#tes$nzv4y)&b%h)g9owplr&gu)ennbyeu*1wi3qqw+*3_bf5"
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -113,6 +117,7 @@ DATABASES = {
         'PORT': config.PostgreSQL['Port'],
     }
 }
+
 # If I comment out the database routers line then I need to go into tweepy code in backend and take 
 # out the line that says I save the JSON in MongoDB
 
@@ -157,12 +162,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = "/djangoWebsite/static/"
+
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 STATICFILES_DIRS = (
     os.path.join(os.path.dirname('style.css'), 'static').replace('\\','/'),
+    "/djangoWebsite/static/",
+    "djangoWebsite/static",
+    os.path.join(BASE_DIR, 'static'),
 )
 
 CELERY_ACCEPT_CONTENT = ["json"]

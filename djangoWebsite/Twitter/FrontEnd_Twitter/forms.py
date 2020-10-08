@@ -14,12 +14,11 @@ class Search(forms.Form):
         self.helper.form_method = 'post'
         self.helper.layout = Layout(
             Fieldset(
-                " ",
+                '',
                 'input_',
                 'fromDate',
                 'toDate',
                 'count',
-                " ",
             ),
             ButtonHolder(
                 Submit('Submit', 'Submit Data', css_class='button white')
@@ -38,7 +37,6 @@ class Query(forms.Form):
             Fieldset(
                 " ",
                 "searchDB",
-                " ",
             ),
             ButtonHolder(
                 Submit('submit','Query Data',css_class='button white'),
@@ -58,7 +56,6 @@ class Login(forms.Form):
                 " ",
                 "username",
                 "password",
-                " ",
             ),
             ButtonHolder(
                 Submit('submit','Login Data',css_class='button white'),
@@ -83,7 +80,6 @@ class Register(forms.Form):
                 "last_name",
                 "username",
                 "password",
-                " ",
 
             ),
             ButtonHolder(

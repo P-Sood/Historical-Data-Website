@@ -5,16 +5,24 @@
 
 {% block title %}
 
-<nav class="navbar navbar-inverse">
+
+<nav class="navbar navbar-dark" style="background-color: #000000;">
   <div class="container-fluid">
       <div class="navbar-header">
-        <ul class="nav navbar-nav navbar-left">
-          <li><a href="#"> <h1>Login</h1> </a></li>
+        <ul class="nav navbar-nav navbar-left pull-left">
+          <li class="nav-item">
+            <a class="nav-link" href="#"> <h1 style="font-size: large;"> <strong> Login </strong>  </h1> </a></li>
         </ul>
       </div>
-      <ul class="nav navbar-nav navbar-right">
-          <li><a href="/register/"><span class="glyphicon glyphicon-user"></span> Sign Up </a></li>
-      </ul>
+      <div class="navbar-body">
+        <ul class="nav navbar-nav navbar-right pull-right">
+            <li class="nav-item">
+              <a class="nav-link" href="/register/">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-user-plus"></i>
+                </span> Sign Up </a></li>
+        </ul>
+      </div>
   </div>
 </nav>
 
@@ -23,38 +31,38 @@
   {% block login %}
     <script>
       $(document).ready(function(){
-        $("#login").modal('show');
+          $("#loginFail").modal('show');
       });
     </script>
-    <div class="container" >
+
+    <div class="container">
       {%  crispy Loginform Loginform.helper  %}
       <br>
+      <!-- data-toggle="modal" data-target="#myModal" -->
       {% for message in messages %}
-      <div class="container">
-        <!-- Modal -->
-        <div class="modal fade" id ='login' role="dialog">
-          <div class="modal-dialog">
-          
-            <!-- Modal content-->
+        <div class="modal fade" id="loginFail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
             <div class="modal-content">
+
               <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h2 class="modal-title">Error</h2>
+                <h5 class="modal-title" id="exampleModalLabel" style="color: red; font: border-style;">ERROR</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
+
               <div class="modal-body">
-                <h3>{{ message }}</h3>
+                {{ message }}
               </div>
+
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
               </div>
+              
             </div>
-            
           </div>
         </div>
-        
-      </div>      
       {% endfor %}
-      <p> Register Here if you dont have an account yet</p> 
-      <a href="/register"> Register here </a>
+      <p> <a href="/register"> Register here </a> if you dont have an account yet</p> 
     </div>
   {% endblock login %}

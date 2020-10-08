@@ -11,4 +11,7 @@ from django.contrib.postgres.fields import JSONField
 class UserExtensionModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key = True)
     arrayTasksCompleted = ArrayField(base_field = models.IntegerField())
+
+    class Meta:
+            db_table = "user_extension_model"
         

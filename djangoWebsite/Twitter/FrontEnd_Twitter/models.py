@@ -19,8 +19,8 @@ class data(models.Model):
     likes = models.PositiveIntegerField()
     search_term = models.CharField(max_length=50)
 
-    def __str__(self):
-        return _id
+    class Meta:
+            db_table = "data"
 
 
 class Twitter_data(models.Model):
@@ -34,13 +34,13 @@ class Twitter_data(models.Model):
     tweet_link = models.TextField()
 
 
-    def __str__(self):
-        return self.keyData.user_id
+    class Meta:
+            db_table = "twitter_data"
 
 class TwitterJSON(models.Model):
     _id = models.CharField(max_length = 50, primary_key = True)
     json = JSONField()
     #json = MongoModels.JSONField()
 
-    def __str__(self):
-        return _id
+    class Meta:
+            db_table = "twitter_json"
