@@ -9,7 +9,6 @@ from django.contrib.messages import error
 from django.contrib.auth.models import User,Permission
 from .models import UserExtensionModel
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 # Create your views here.
@@ -21,24 +20,25 @@ def home_page(request):
 def login_page(request):
     loginHTML = 'registration/login.html'
 
-    LoginForm = AuthenticationForm()
+    LoginForm = loginForm()
 
     if request.method == 'POST':
         LoginForm = loginForm(request.POST)
         if LoginForm.is_valid():
             username = LoginForm.cleaned_data['username']
             password = LoginForm.cleaned_data['password']
-            authenticate(username = username,password = password)
-            user = User.objects.filter(username = username)
-            try:
-                login(request,user[0])
-                if user[0].is_superuser:
-                    return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
-                else:
-                    return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
-            except IndexError:
+            User = authenticate(username = username,password = password)
+            if User is not None:
+                login(request,User)
+                return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
+            else:
                 error(request,"User or Password not correct")
                 return redirect('/login/')
+        else:
+            error(request,"User or Password not correct")
+            return redirect('/login/')
+            
+                
     context = {
         'Loginform': LoginForm,
     }
