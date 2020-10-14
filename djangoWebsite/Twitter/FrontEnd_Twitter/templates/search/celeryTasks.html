@@ -13,16 +13,49 @@
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Arguments</th>
+                    <th scope="col">Search Term</th>
+                    <th scope="col">From Date</th>
+                    <th scope="col">To Date</th>
+                    <th scope="col">Page Count</th>
+                    <th scope="col">Status</th>
+                    <th scope="col"># Tweets Retreived</th>
+                    <th scope="col"># Tweets Duplicated</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for taskNumber,taskArgs in tasksData %}
+                  {% for taskNumber,taskArgs,taskResults,taskStatus in tasksData %}
                     <tr>
                       <th scope="row">{{forloop.counter}}</th>
                       <td>
-                        <a href="http://localhost:8000/admin/django_celery_results/taskresult/{{taskNumber}}/change/" class="list-group-item">Click here for updates {{taskArgs}}</a>
+                        {{taskArgs.0}}
                       </td>
+                      <td>
+                        {{taskArgs.1}}
+                      </td>
+                      <td>
+                        {{taskArgs.2}}
+                      </td>
+                      <td>
+                        {{taskArgs.3}}
+                      </td>
+                      <td>
+                        {{taskStatus}}
+                      </td>
+                      {% if taskResults.numTweets %}
+                        <td>
+                          {{taskResults.numTweets}}
+                        </td>
+                        <td>
+                          {{taskResults.numDuplicates}}
+                        </td>
+                      {% else %}
+                        <td>
+                          {{taskResults.current}}
+                        </td>
+                        <td>
+                          Wait for Task to Complete
+                        </td>
+                      {% endif %}
                     </tr>
                   {% endfor %}
                 </tbody>

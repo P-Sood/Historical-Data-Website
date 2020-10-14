@@ -3,6 +3,7 @@ from .tasks import queryTweet_Tweepy
 from django.shortcuts import render,redirect
 from django.template import RequestContext
 from django.contrib.messages import error
+import json
 
 from Home.models import UserExtensionModel
 
@@ -96,7 +97,10 @@ def addDB(request):
 
 def results(request):
 
-    arrayTaskArgs =[]
+    arrayTaskArgs = []
+    arrayTaskResult = []
+    arrayTaskStatus = []
+
     currentUser = request.user
     currentUserModelExt = UserExtensionModel.objects.filter(user = currentUser)
     currentUserModelExt_arrayTasksCompleted = currentUserModelExt[0].arrayTasksCompleted
@@ -110,13 +114,26 @@ def results(request):
 
     for taskNumber in currentUserModelExt_arrayTasksCompleted:
         try:
-            arrayTaskArgs.append(TaskResult.objects.filter(id = taskNumber)[0].task_args)
+            task = TaskResult.objects.filter(id = taskNumber)[0]
+
+            args = task.task_args
+            args =  args[1:len(args)-1].split(',')             
+            arrayTaskArgs.append(args)
+
+            result = json.loads(task.result)
+            arrayTaskResult.append(result)
+
+            status = task.status
+            arrayTaskStatus.append(status)
+
+
+
         except IndexError:
             return redirect('/Twitter/results/')
 
     context = {
         'task_id': task_id,
-        'tasksData' : zip(currentUserModelExt_arrayTasksCompleted,arrayTaskArgs ),
+        'tasksData' : zip(currentUserModelExt_arrayTasksCompleted,arrayTaskArgs ,arrayTaskResult, arrayTaskStatus),
        }
 
     return render(request, 'search/celeryTasks.html',context)

@@ -9,6 +9,8 @@ from django.contrib.messages import error
 from django.contrib.auth.models import User,Permission
 from .models import UserExtensionModel
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
 
 # Create your views here.
 
@@ -19,7 +21,7 @@ def home_page(request):
 def login_page(request):
     loginHTML = 'registration/login.html'
 
-    LoginForm = loginForm()
+    LoginForm = AuthenticationForm()
 
     if request.method == 'POST':
         LoginForm = loginForm(request.POST)
@@ -33,7 +35,6 @@ def login_page(request):
                 if user[0].is_superuser:
                     return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
                 else:
-                    UserModel = UserExtensionModel.objects.get(user = user[0])
                     return redirect('%s?next=%s' % (settings.LOGIN_REDIRECT_URL, request.path))
             except IndexError:
                 error(request,"User or Password not correct")

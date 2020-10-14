@@ -54,7 +54,6 @@ class TwitterAPITweepy(cleanTweets):
         context = {
             'numDuplicates' : 0,
             'numTweets' :  0,
-            'ifSuccess': "Success"
         }
         
         query = []
@@ -64,10 +63,10 @@ class TwitterAPITweepy(cleanTweets):
 
         iteration = 0
         for tweet in tweepy.Cursor(self.api.search,q=searchParameters,count= count,lang="en",since = since, until = until ,tweet_mode="extended",).items():
-            progressRecorder.set_progress(iteration,iteration + 1,"on iteration: " + str(iteration))
+            progressRecorder.set_progress(iteration,iteration + 1,"We have retrieved " + str(iteration) + " number of tweets ")
             iteration += 1
             user =  tweet.user
-            context['numTweets'] += 1
+            context['numTweets'] = iteration
             parsed_tweet = {
                 '_id':  tweet.id_str,
                 'user_id':  user.screen_name,
